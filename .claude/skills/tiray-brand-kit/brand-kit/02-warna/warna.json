@@ -1,0 +1,19 @@
+{
+  "green-500": { "hex": "#30b349", "rgb": [48, 179, 73], "status": "resmi", "pakai": "Panah lambang. Grafis saja", "kontrasPutih": 2.74 },
+  "green-700": { "hex": "#1d7a32", "rgb": [29, 122, 50], "status": "rekomendasi", "pakai": "Tombol, teks hijau", "kontrasPutih": 5.41 },
+  "blue-300": { "hex": "#9bd5ef", "rgb": [155, 213, 239], "status": "resmi", "pakai": "Ujung terang tetes air", "kontrasPutih": 1.6 },
+  "blue-800": { "hex": "#244da9", "rgb": [36, 77, 169], "status": "resmi", "pakai": "Ujung tua tetes, teks biru, tautan", "kontrasPutih": 7.75 },
+  "leaf-300": { "hex": "#98c026", "rgb": [152, 192, 38], "status": "resmi", "pakai": "Ujung terang daun", "kontrasPutih": 2.12 },
+  "leaf-700": { "hex": "#387519", "rgb": [56, 117, 25], "status": "resmi", "pakai": "Ujung tua daun", "kontrasPutih": 5.64 },
+  "gold-300": { "hex": "#ffc20e", "rgb": [255, 194, 14], "status": "rekomendasi", "pakai": "Nama, aksen. Teks di atasnya pakai ink", "kontrasPutih": 1.62 },
+  "gold-600": { "hex": "#c99700", "rgb": [201, 151, 0], "status": "rekomendasi", "pakai": "Ujung tua emas", "kontrasPutih": 2.65 },
+  "ink": { "hex": "#16243b", "rgb": [22, 36, 59], "status": "rekomendasi", "pakai": "Teks utama", "kontrasPutih": 15.56 },
+  "ink-muted": { "hex": "#44536b", "rgb": [68, 83, 107], "status": "rekomendasi", "pakai": "Teks sekunder", "kontrasPutih": 7.79 },
+  "line": { "hex": "#dde3ec", "rgb": [221, 227, 236], "status": "rekomendasi", "pakai": "Garis, batas" },
+  "white": { "hex": "#ffffff", "rgb": [255, 255, 255], "status": "resmi", "pakai": "Warna dasar logo (Pasal 6 ayat 4)" },
+  "gradasi": {
+    "water": ["#9bd5ef", "#244da9"],
+    "leaf": ["#98c026", "#387519"],
+    "gold": ["#ffc20e", "#c99700"]
+  }
+}

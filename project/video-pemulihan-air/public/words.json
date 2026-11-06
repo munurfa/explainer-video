@@ -1,0 +1,652 @@
+[
+ {
+  "text": "Hai",
+  "startMs": 100,
+  "endMs": 374
+ },
+ {
+  "text": "Jakwir",
+  "startMs": 374,
+  "endMs": 731
+ },
+ {
+  "text": "Air",
+  "startMs": 731,
+  "endMs": 1231
+ },
+ {
+  "text": "Pipa",
+  "startMs": 2025,
+  "endMs": 2263
+ },
+ {
+  "text": "udah",
+  "startMs": 2263,
+  "endMs": 2454
+ },
+ {
+  "text": "dibenerin",
+  "startMs": 2454,
+  "endMs": 3025
+ },
+ {
+  "text": "kok",
+  "startMs": 3275,
+  "endMs": 3418
+ },
+ {
+  "text": "air",
+  "startMs": 3418,
+  "endMs": 3668
+ },
+ {
+  "text": "di",
+  "startMs": 3668,
+  "endMs": 3763
+ },
+ {
+  "text": "rumah",
+  "startMs": 3763,
+  "endMs": 3965
+ },
+ {
+  "text": "belum",
+  "startMs": 3965,
+  "endMs": 4132
+ },
+ {
+  "text": "ngalir",
+  "startMs": 4132,
+  "endMs": 4370
+ },
+ {
+  "text": "juga",
+  "startMs": 4370,
+  "endMs": 4870
+ },
+ {
+  "text": "Kita",
+  "startMs": 5669,
+  "endMs": 5979
+ },
+ {
+  "text": "bedah",
+  "startMs": 5979,
+  "endMs": 6502
+ },
+ {
+  "text": "Air",
+  "startMs": 7310,
+  "endMs": 7536
+ },
+ {
+  "text": "Tirta",
+  "startMs": 7536,
+  "endMs": 7798
+ },
+ {
+  "text": "Ayu",
+  "startMs": 7798,
+  "endMs": 8036
+ },
+ {
+  "text": "mengalir",
+  "startMs": 8036,
+  "endMs": 8369
+ },
+ {
+  "text": "pakai",
+  "startMs": 8369,
+  "endMs": 8619
+ },
+ {
+  "text": "gravitasi",
+  "startMs": 8619,
+  "endMs": 9393
+ },
+ {
+  "text": "dari",
+  "startMs": 9643,
+  "endMs": 9881
+ },
+ {
+  "text": "reservoir",
+  "startMs": 9881,
+  "endMs": 10381
+ },
+ {
+  "text": "di",
+  "startMs": 10381,
+  "endMs": 10476
+ },
+ {
+  "text": "tempat",
+  "startMs": 10476,
+  "endMs": 10714
+ },
+ {
+  "text": "tinggi",
+  "startMs": 10714,
+  "endMs": 11190
+ },
+ {
+  "text": "lewat",
+  "startMs": 11464,
+  "endMs": 11726
+ },
+ {
+  "text": "pipa",
+  "startMs": 11726,
+  "endMs": 11917
+ },
+ {
+  "text": "transmisi",
+  "startMs": 11917,
+  "endMs": 12667
+ },
+ {
+  "text": "jaringan",
+  "startMs": 12917,
+  "endMs": 13321
+ },
+ {
+  "text": "distribusi",
+  "startMs": 13321,
+  "endMs": 14083
+ },
+ {
+  "text": "lalu",
+  "startMs": 14333,
+  "endMs": 14607
+ },
+ {
+  "text": "sampai",
+  "startMs": 14607,
+  "endMs": 14940
+ },
+ {
+  "text": "ke",
+  "startMs": 14940,
+  "endMs": 15024
+ },
+ {
+  "text": "rumah",
+  "startMs": 15024,
+  "endMs": 15250
+ },
+ {
+  "text": "kamu",
+  "startMs": 15250,
+  "endMs": 15667
+ },
+ {
+  "text": "Saat",
+  "startMs": 16465,
+  "endMs": 16751
+ },
+ {
+  "text": "pipa",
+  "startMs": 16751,
+  "endMs": 16954
+ },
+ {
+  "text": "diperbaiki",
+  "startMs": 16954,
+  "endMs": 17727
+ },
+ {
+  "text": "aliran",
+  "startMs": 17989,
+  "endMs": 18311
+ },
+ {
+  "text": "ditutup",
+  "startMs": 18311,
+  "endMs": 18704
+ },
+ {
+  "text": "dan",
+  "startMs": 18704,
+  "endMs": 18870
+ },
+ {
+  "text": "pipa",
+  "startMs": 18870,
+  "endMs": 19132
+ },
+ {
+  "text": "jadi",
+  "startMs": 19132,
+  "endMs": 19346
+ },
+ {
+  "text": "kosong",
+  "startMs": 19346,
+  "endMs": 19870
+ },
+ {
+  "text": "Begitu",
+  "startMs": 20679,
+  "endMs": 21000
+ },
+ {
+  "text": "katup",
+  "startMs": 21000,
+  "endMs": 21214
+ },
+ {
+  "text": "dibuka",
+  "startMs": 21214,
+  "endMs": 21810
+ },
+ {
+  "text": "air",
+  "startMs": 22060,
+  "endMs": 22333
+ },
+ {
+  "text": "harus",
+  "startMs": 22333,
+  "endMs": 22560
+ },
+ {
+  "text": "mengisi",
+  "startMs": 22560,
+  "endMs": 22845
+ },
+ {
+  "text": "pipa",
+  "startMs": 22845,
+  "endMs": 23048
+ },
+ {
+  "text": "utama",
+  "startMs": 23048,
+  "endMs": 23333
+ },
+ {
+  "text": "dulu",
+  "startMs": 23333,
+  "endMs": 23786
+ },
+ {
+  "text": "baru",
+  "startMs": 24060,
+  "endMs": 24310
+ },
+ {
+  "text": "pipa",
+  "startMs": 24310,
+  "endMs": 24524
+ },
+ {
+  "text": "distribusi",
+  "startMs": 24524,
+  "endMs": 25298
+ },
+ {
+  "text": "sedikit",
+  "startMs": 25548,
+  "endMs": 25976
+ },
+ {
+  "text": "demi",
+  "startMs": 25976,
+  "endMs": 26131
+ },
+ {
+  "text": "sedikit",
+  "startMs": 26131,
+  "endMs": 26690
+ },
+ {
+  "text": "Di",
+  "startMs": 27489,
+  "endMs": 27668
+ },
+ {
+  "text": "dalam",
+  "startMs": 27668,
+  "endMs": 27894
+ },
+ {
+  "text": "pipa",
+  "startMs": 27894,
+  "endMs": 28168
+ },
+ {
+  "text": "ada",
+  "startMs": 28168,
+  "endMs": 28346
+ },
+ {
+  "text": "udara",
+  "startMs": 28346,
+  "endMs": 28668
+ },
+ {
+  "text": "yang",
+  "startMs": 28668,
+  "endMs": 28811
+ },
+ {
+  "text": "terjebak",
+  "startMs": 28811,
+  "endMs": 29394
+ },
+ {
+  "text": "Udara",
+  "startMs": 30192,
+  "endMs": 30489
+ },
+ {
+  "text": "ini",
+  "startMs": 30489,
+  "endMs": 30727
+ },
+ {
+  "text": "dibuang",
+  "startMs": 30727,
+  "endMs": 31084
+ },
+ {
+  "text": "lewat",
+  "startMs": 31085,
+  "endMs": 31323
+ },
+ {
+  "text": "katup",
+  "startMs": 31323,
+  "endMs": 31573
+ },
+ {
+  "text": "udara",
+  "startMs": 31573,
+  "endMs": 32120
+ },
+ {
+  "text": "Kalau",
+  "startMs": 32918,
+  "endMs": 33180
+ },
+ {
+  "text": "nggak",
+  "startMs": 33180,
+  "endMs": 33561
+ },
+ {
+  "text": "alirannya",
+  "startMs": 33787,
+  "endMs": 34263
+ },
+ {
+  "text": "tersendat",
+  "startMs": 34263,
+  "endMs": 34954
+ },
+ {
+  "text": "Setelah",
+  "startMs": 35751,
+  "endMs": 36120
+ },
+ {
+  "text": "pipa",
+  "startMs": 36120,
+  "endMs": 36311
+ },
+ {
+  "text": "penuh",
+  "startMs": 36311,
+  "endMs": 36751
+ },
+ {
+  "text": "tekanan",
+  "startMs": 36989,
+  "endMs": 37311
+ },
+ {
+  "text": "pelan-pelan",
+  "startMs": 37311,
+  "endMs": 37656
+ },
+ {
+  "text": "pulih",
+  "startMs": 37656,
+  "endMs": 38132
+ },
+ {
+  "text": "dan",
+  "startMs": 38358,
+  "endMs": 38561
+ },
+ {
+  "text": "air",
+  "startMs": 38561,
+  "endMs": 38846
+ },
+ {
+  "text": "mulai",
+  "startMs": 38846,
+  "endMs": 39073
+ },
+ {
+  "text": "keluar",
+  "startMs": 39073,
+  "endMs": 39370
+ },
+ {
+  "text": "dari",
+  "startMs": 39370,
+  "endMs": 39549
+ },
+ {
+  "text": "keran",
+  "startMs": 39549,
+  "endMs": 40001
+ },
+ {
+  "text": "Makanya",
+  "startMs": 40810,
+  "endMs": 41190
+ },
+ {
+  "text": "tiap",
+  "startMs": 41190,
+  "endMs": 41405
+ },
+ {
+  "text": "wilayah",
+  "startMs": 41405,
+  "endMs": 41714
+ },
+ {
+  "text": "beda",
+  "startMs": 41714,
+  "endMs": 41917
+ },
+ {
+  "text": "waktunya",
+  "startMs": 41917,
+  "endMs": 42524
+ },
+ {
+  "text": "tergantung",
+  "startMs": 42774,
+  "endMs": 43190
+ },
+ {
+  "text": "ketinggian",
+  "startMs": 43190,
+  "endMs": 43798
+ },
+ {
+  "text": "jarak",
+  "startMs": 44060,
+  "endMs": 44405
+ },
+ {
+  "text": "dari",
+  "startMs": 44405,
+  "endMs": 44560
+ },
+ {
+  "text": "sumber",
+  "startMs": 44560,
+  "endMs": 45024
+ },
+ {
+  "text": "ukuran",
+  "startMs": 45250,
+  "endMs": 45595
+ },
+ {
+  "text": "pipa",
+  "startMs": 45595,
+  "endMs": 46095
+ },
+ {
+  "text": "dan",
+  "startMs": 46298,
+  "endMs": 46500
+ },
+ {
+  "text": "udara",
+  "startMs": 46500,
+  "endMs": 46821
+ },
+ {
+  "text": "yang",
+  "startMs": 46821,
+  "endMs": 46964
+ },
+ {
+  "text": "terjebak",
+  "startMs": 46964,
+  "endMs": 47524
+ },
+ {
+  "text": "Jadi",
+  "startMs": 48323,
+  "endMs": 48657
+ },
+ {
+  "text": "sabar",
+  "startMs": 48657,
+  "endMs": 48907
+ },
+ {
+  "text": "sebentar",
+  "startMs": 48907,
+  "endMs": 49514
+ },
+ {
+  "text": "ya",
+  "startMs": 49728,
+  "endMs": 50157
+ },
+ {
+  "text": "Info",
+  "startMs": 50964,
+  "endMs": 51226
+ },
+ {
+  "text": "gangguan",
+  "startMs": 51226,
+  "endMs": 51595
+ },
+ {
+  "text": "bisa",
+  "startMs": 51595,
+  "endMs": 51786
+ },
+ {
+  "text": "kamu",
+  "startMs": 51786,
+  "endMs": 51976
+ },
+ {
+  "text": "cek",
+  "startMs": 51976,
+  "endMs": 52179
+ },
+ {
+  "text": "di",
+  "startMs": 52179,
+  "endMs": 52250
+ },
+ {
+  "text": "aplikasi",
+  "startMs": 52250,
+  "endMs": 52655
+ },
+ {
+  "text": "Tiray",
+  "startMs": 52655,
+  "endMs": 53155
+ },
+ {
+  "text": "atau",
+  "startMs": 53429,
+  "endMs": 53631
+ },
+ {
+  "text": "tanya",
+  "startMs": 53631,
+  "endMs": 53893
+ },
+ {
+  "text": "lewat",
+  "startMs": 53893,
+  "endMs": 54119
+ },
+ {
+  "text": "WhatsApp",
+  "startMs": 54119,
+  "endMs": 54452
+ },
+ {
+  "text": "Tirta",
+  "startMs": 54452,
+  "endMs": 54690
+ },
+ {
+  "text": "Ayu",
+  "startMs": 54690,
+  "endMs": 55131
+ },
+ {
+  "text": "Yuh",
+  "startMs": 55931,
+  "endMs": 56217
+ },
+ {
+  "text": "buka",
+  "startMs": 56217,
+  "endMs": 56407
+ },
+ {
+  "text": "Tiray",
+  "startMs": 56407,
+  "endMs": 56907
+ },
+ {
+  "text": "Ayo",
+  "startMs": 57704,
+  "endMs": 57965
+ },
+ {
+  "text": "Jakwir",
+  "startMs": 57965,
+  "endMs": 58549
+ },
+ {
+  "text": "monggo",
+  "startMs": 58787,
+  "endMs": 59096
+ },
+ {
+  "text": "didownload",
+  "startMs": 59096,
+  "endMs": 59811
+ }
+]

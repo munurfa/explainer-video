@@ -1,0 +1,43 @@
+# ── Dependensi & build ─────────────────────────
+node_modules/
+dist/
+build/
+.remotion/
+*.tsbuildinfo
+
+# ── Hasil render (besar, bisa dibuat ulang) ────
+project/*/out/
+**/out/storyboard/
+**/out/qa-stills/
+sample/
+
+# ── Audio hasil generate script ────────────────
+# bed/music/sfx-track masing-masing ±11,5 MB, dibuat ulang lewat synth-audio.mjs
+project/*/public/audio/bed.wav
+project/*/public/audio/music.wav
+project/*/public/audio/sfx-track.wav
+# narration.mp3 & words.json SENGAJA tidak di-ignore (hasil TTS bisa sedikit
+# berbeda tiap generate, sehingga timing animasi bisa bergeser)
+
+# ── Rahasia / API key ──────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Pengaturan lokal Claude Code ───────────────
+.claude/settings.local.json
+
+# ── Cache & log ────────────────────────────────
+*.log
+npm-debug.log*
+.cache/
+.eslintcache
+
+# ── Sistem operasi & editor ────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp

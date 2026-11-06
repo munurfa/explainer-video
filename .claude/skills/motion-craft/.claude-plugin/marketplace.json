@@ -1,0 +1,20 @@
+{
+  "name": "motion-craft",
+  "description": "After Effects-grade Motion Graphics & Seamless Video Editing skill for Remotion: 43 styles, 7 Editing Humanizers, C1 spline camera following typing & cursor, seamless match-cut transitions, bottom subtitle bar, and deterministic 48kHz audio synthesis.",
+  "owner": {
+    "name": "RajaskaJanuardani"
+  },
+  "plugins": [
+    {
+      "name": "motion-craft",
+      "description": "After Effects-grade Remotion skill with 43 design styles, 7 Editing Humanizers, smooth C1 spline camera (follow typing & cursor, zero shake), seamless scene transitions, bottom subtitle bar, and procedural BGM/SFX.",
+      "version": "2.1.0",
+      "source": "./",
+      "skills": ["./"],
+      "homepage": "https://github.com/RajaskaJanuardani/motion-craft",
+      "repository": "https://github.com/RajaskaJanuardani/motion-craft",
+      "license": "MIT",
+      "keywords": ["remotion", "motion-graphics", "after-effects", "video-editing", "antislop", "animation"]
+    }
+  ]
+}

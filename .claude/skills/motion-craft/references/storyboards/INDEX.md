@@ -1,0 +1,251 @@
+# STORYBOARD INDEX — 100 Template Storyboard untuk Remotion
+
+Katalog 100 template storyboard di 10 kategori untuk skill `/motion-craft`. Tiap template adalah rencana scene (waktu, visual, motion, kamera, transisi, SFX) yang sudah mematuhi aturan skill. Agent memilih satu template, menyalinnya, lalu mengadaptasinya ke brief.
+
+> Baca file kategori yang dipilih saja, jangan memuat semua 10 file sekaligus.
+
+---
+
+## Alur Pakai (untuk Agent)
+
+1. **Cocokkan brief ke template.** Cari di tabel "Daftar Template" di bawah berdasarkan konteks (promo, tutorial, undangan, dst.). Kalau tidak ada yang pas, ambil template terdekat dan ubah, atau mulai dari `templates/STORYBOARD.template.md`.
+2. **Buka file kategorinya** dan salin blok template ke `research/storyboard.md` di project.
+3. **Adaptasi**, jangan menyalin mentah:
+   - Ganti semua isi visual dan teks dengan konten brief. Jumlah scene boleh ditambah atau dikurangi, tapi satu scene tetap satu ide.
+   - Skalakan durasi ke permintaan user. Pertahankan **pacing asimetris** (hook pendek, isi lebih panjang, penutup ringkas); jangan membagi rata.
+   - Isian `gaya` adalah kata kunci mood, bukan ID gaya. Pakai sebagai `--brief` untuk `draw-style.mjs`, lalu **wajib baca file gaya terpilih** di `references/styles/`.
+4. **Ambil logo** untuk setiap brand/teknologi/project yang muncul di storyboard dengan `fetch-brand-logo.mjs`.
+5. **Narasi dan audio:** `narrator-sync.mjs`, lalu `synth-audio.mjs --bgm <ID di template>` (atau pilih lain dari `references/SOUND.md`).
+6. **Implementasi, lalu** `lint.mjs`, `inspect-motion.mjs`, render.
+
+Konversi waktu: `frame = detik × fps` (default 30 fps). Kolom Detik adalah jendela tayang tiap scene. Dengan `overlap 10`, scene berikutnya mulai 10 frame lebih awal agar transisi berbagi frame; samakan total akhir dengan keluaran `scenes.mjs`.
+
+---
+
+## Kode Singkatan
+
+**Cam** (kamera, selalu C1 spline `splineAt`, tanpa shake)
+
+| Kode | Arti |
+|---|---|
+| HOLD | Diam 1.0x. Dipakai saat konteks utuh. |
+| PUSH | Zoom-in halus (sekitar 1.0→1.15x), dengan anticipation pullback 3 frame. |
+| PULL | Zoom-out pelan ke tampilan utuh. |
+| TYPE | Zoom-follow ketikan, `buildTypingCameraSpline`. |
+| CURSOR | Mengikuti kursor dan klik, `buildCursorFollowCameraSpline` (overshoot Fitts's Law, hover 5 frame). |
+| GLIDE | Sapuan lebar di kanvas panjang, jendela/elemen masuk via `staggeredSpringAt`. |
+
+**Out** (transisi keluar scene, lewat `<SeamlessSceneShell enableTransitionSfx />`)
+
+| Kode | Arti |
+|---|---|
+| WGL | `whip-glide-left` |
+| WGU | `whip-glide-up` |
+| PZI | `portal-zoom-in` |
+| SSU | `spring-sheet-up` |
+| MC | `match-cut` |
+| MORPH | `<SharedElementMorph />` (objek yang sama berubah bentuk lintas scene) |
+| END | Scene terakhir: hold lalu fade/keluar. |
+
+**SFX** (selalu terikat pada animasi yang sedang berjalan)
+
+| Kode | Arti |
+|---|---|
+| TYPE (varian) | `<TypeText enableTypingSfx typingVariant="mechanical" \| "soft" \| "digital" />`, mulai di karakter pertama, berhenti di karakter terakhir. |
+| CLICK | `<AnimatedCursor enableClickSfx />` (hover-rollover 6 frame sebelum klik, lalu click). |
+| PROG | `<AnimatedProgressBar enableProgressSfx />` dan chime saat 100%. |
+| pop-in, pop-plop, data-reveal, confirm-glass, impact-soft | `<SfxCue frame={...} sfx="..." />` tepat saat elemen muncul. |
+| — | Tanpa SFX. Jangan menambah SFX liar. |
+
+**BGM** yang dipakai di template:
+
+| ID | Karakter |
+|---|---|
+| B25 | Apple Keynote Minimal Pluck (minimal, elegan) |
+| B26 | Framer / Linear SaaS Groove (teknologi, SaaS) |
+| B27 | Vox Documentary Piano (dokumenter, data, edukasi) |
+| B28 | Phonk Drift (tegas, gelap, otomotif, gaming) |
+| B29 | UK Garage 2-Step (muda, cepat, media sosial) |
+| B31 | Neo-Soul Rhodes (hangat, kuliner, perayaan) |
+| B32 | Liquid DnB (energik, event, trailer) |
+
+Pilihan lain (B00–B39 dan M01–M24) ada di `references/SOUND.md`.
+
+---
+
+## Aturan yang Berlaku untuk Semua Template
+
+Ini ringkasan dari 6 aturan keras di `SKILL.md`, diterapkan ke tahap storyboard:
+
+1. **Tanpa pill/badge** di belakang judul, label, atau kata. Penekanan lewat ukuran, kontras warna, posisi. Background hanya untuk tombol interaktif yang benar-benar diklik kursor atau bubble chat di aplikasi chat.
+2. **Tanpa titik bulat** di samping teks dan **tanpa ikon hiasan** (petir, sparkle, bohlam, tameng generik). Ikon hanya boleh fungsional (panah delta, tombol nyata).
+3. **Logo asli** untuk setiap brand, teknologi, atau project: `<BrandLogo />` + `fetch-brand-logo.mjs`. Jangan menggambar logo karangan.
+4. **SFX terikat animasi.** Tidak ada SFX per kata subtitle, tidak ada SFX saat tidak ada aksi.
+5. **UI asli** untuk browser, terminal, aplikasi, desktop: `<AuthenticBrowserWindow />`, `<AuthenticTerminalWindow />`, `<ChatAppShell />`, `<MacDesktopChrome />`.
+6. **Hero di tengah (85%), subtitle di bawah (15%)** lewat `<BottomSubtitleBar />` tanpa kotak warna. Kamera tenang dan transisi seamless.
+
+Tambahan khusus storyboard:
+
+- **Aset:** foto/footage/logo milik user taruh di `public/`. Jika tidak ada, buat komposisi tipografi dan shape dari kode. Jangan mengarang foto, logo, atau data.
+- **Data dan statistik:** hanya dari user atau sumber yang dicantumkan di layar.
+- **Satu scene, satu ide.** Teks di layar maksimal sekitar 3 kata/detik; sisanya lewat narasi subtitle.
+- **Hook** dalam 2–3 detik pertama; **CTA** jelas di scene terakhir.
+
+---
+
+## Komponen Koreografi Kartu 3D, Grid Animation, & Card Interaction (Siap Pakai di Storyboard)
+
+Selain UI autentik (`<AuthenticBrowserWindow />`, `<AuthenticTerminalWindow />`, `<ChatAppShell />`, `<MacDesktopChrome />`), setiap template `T001`–`T100` mencantumkan rekomendasi komponen dari `references/CARD-GRID-3D-PATTERNS.md`:
+
+- **3D Card Layouts (`templates/components/Card3DLayouts.tsx`):** `<Coverflow3D />`, `<FerrisWheelCards />`, `<CubeRoll3D />`, `<CylinderCards3D />`, `<HelixCards3D />`, `<SphereCards3D />`, `<ZDepthTunnel />`.
+- **Grid Animations (`templates/components/GridAnimations.tsx`):** `<BentoGridReveal />` (`kotak 1` -> `2-3` -> `lengkap`), `<ExplodeToGrid />` (`tumpukan` -> `pecah` -> `rapi di grid`), `<LayoutMorphGridToCarousel />` (`grid` -> `carousel`), `<MasonryZoomDetail />` (`pilih kotak` -> `jadi halaman`), `<GridRecapZoomOut />` (`slide terakhir` -> `recap semua`).
+- **Card Interactions (`templates/components/CardInteractions.tsx`):** `<CardStackSwipe />`, `<FanSpreadCards />`, `<PolaroidDropTable />` (foto jatuh ke meja + `k2.wav`), `<CardFlip3D />` (balik 180 derajat), `<PageCurlCard />` (sudut halaman tergulung), `<PageTurnBook />` (balik halaman buku), `<AccordionFoldCard />` (lipatan zig-zag 3D).
+
+Generate storyboard otomatis dari CLI:
+```bash
+node "<skill>/scripts/scenes.mjs" --template T032 --brief "Demo SaaS AI Dashboard" --duration 20 --out research
+```
+
+---
+
+## Daftar Template
+
+### 01 · Bisnis & Promosi — `01-bisnis-promosi.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T001 | Promo Produk Teaser | 15s | 9:16 |
+| T002 | Flash Sale Countdown | 12s | 9:16 |
+| T003 | Grand Opening Toko | 20s | 16:9 |
+| T004 | Product Reveal Peluncuran | 20s | 16:9 |
+| T005 | Testimoni Pelanggan (Gaya Chat) | 18s | 9:16 |
+| T006 | Before–After Produk | 15s | 1:1 |
+| T007 | Katalog Menu Kafe/Restoran | 20s | 9:16 |
+| T008 | Promo Ramadan / Lebaran | 20s | 16:9 |
+| T009 | Paket Harga (Pricing Tiers) | 18s | 16:9 |
+| T010 | Cara Pemesanan 4 Langkah (UMKM) | 20s | 9:16 |
+
+### 02 · Korporat & Profesional — `02-korporat-profesional.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T011 | Company Profile | 30s | 16:9 |
+| T012 | Pitch Startup | 30s | 16:9 |
+| T013 | Laporan Kinerja Kuartal | 25s | 16:9 |
+| T014 | Onboarding Karyawan Baru | 25s | 16:9 |
+| T015 | Lowongan Kerja (Rekrutmen) | 15s | 9:16 |
+| T016 | Event Recap Perusahaan | 20s | 16:9 |
+| T017 | Laporan CSR | 25s | 16:9 |
+| T018 | Ucapan HUT Perusahaan | 15s | 16:9 |
+| T019 | Visi, Misi & Nilai | 20s | 16:9 |
+| T020 | Roadmap Produk | 25s | 16:9 |
+
+### 03 · Edukasi & Akademik — `03-edukasi-akademik.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T021 | Penjelasan Konsep (Explainer) | 30s | 16:9 |
+| T022 | Presentasi Tugas Kuliah / Skripsi | 30s | 16:9 |
+| T023 | Tutorial Step-by-Step | 30s | 16:9 |
+| T024 | Timeline Sejarah | 25s | 16:9 |
+| T025 | Fakta Singkat Edukasi | 15s | 9:16 |
+| T026 | Rangkuman Materi (Cheatsheet) | 25s | 16:9 |
+| T027 | Pengumuman Kampus | 15s | 9:16 |
+| T028 | Promosi Seminar / Webinar | 20s | 16:9 |
+| T029 | Demo Proyek Capstone | 30s | 16:9 |
+| T030 | Diagram Alur Sistem (UML / Flow Explainer) | 25s | 16:9 |
+
+### 04 · Teknologi & Software — `04-teknologi-software.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T031 | Demo Aplikasi Mobile | 20s | 9:16 |
+| T032 | Demo SaaS Dashboard | 20s | 16:9 |
+| T033 | Changelog / Fitur Baru | 15s | 16:9 |
+| T034 | Arsitektur / Cara Kerja API | 25s | 16:9 |
+| T035 | Coding Demo Live-Typing | 20s | 16:9 |
+| T036 | Instalasi CLI di Terminal | 15s | 16:9 |
+| T037 | AI Prompt-to-Result | 20s | 16:9 |
+| T038 | Showcase Website / Portofolio Developer | 20s | 16:9 |
+| T039 | Cybersecurity Awareness | 20s | 16:9 |
+| T040 | Proyek Open Source / GitHub Repo | 20s | 16:9 |
+
+### 05 · Media Sosial — `05-media-sosial.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T041 | Hook 3 Detik TikTok / Reels | 15s | 9:16 |
+| T042 | Tips Cepat 3 Hal | 20s | 9:16 |
+| T043 | Cerita Chat Gaya iMessage | 20s | 9:16 |
+| T044 | Kinetic Typography Quote | 15s | 9:16 |
+| T045 | Countdown Event / Rilis | 10s | 9:16 |
+| T046 | Giveaway | 15s | 9:16 |
+| T047 | Behind the Scenes Desktop | 20s | 16:9 |
+| T048 | Mitos vs Fakta | 15s | 9:16 |
+| T049 | Poll / Tanya Jawab | 10s | 9:16 |
+| T050 | Expectation vs Reality | 12s | 9:16 |
+
+### 06 · Event & Perayaan — `06-event-perayaan.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T051 | Undangan Pernikahan | 25s | 9:16 |
+| T052 | Ulang Tahun | 15s | 9:16 |
+| T053 | Save the Date | 12s | 1:1 |
+| T054 | Aftermovie Konser / Event (Tipografis) | 25s | 16:9 |
+| T055 | Trailer Pembukaan Acara | 20s | 16:9 |
+| T056 | Ucapan Wisuda | 20s | 9:16 |
+| T057 | Ucapan Idulfitri | 20s | 9:16 |
+| T058 | Ucapan Tahun Baru | 15s | 9:16 |
+| T059 | HUT RI 17 Agustus | 20s | 16:9 |
+| T060 | Undangan Reuni | 15s | 9:16 |
+
+### 07 · Sosial & Kampanye — `07-sosial-kampanye.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T061 | Kampanye Lingkungan | 25s | 16:9 |
+| T062 | Galang Dana / Donasi | 25s | 9:16 |
+| T063 | Edukasi Kesehatan Masyarakat | 20s | 9:16 |
+| T064 | Anti-Bullying | 20s | 9:16 |
+| T065 | Hemat Energi | 20s | 16:9 |
+| T066 | Kampanye Literasi | 20s | 16:9 |
+| T067 | Keselamatan Berkendara | 15s | 9:16 |
+| T068 | Kampanye Pemilihan Ketua Organisasi (OSIS/BEM) | 20s | 9:16 |
+| T069 | Hari Peringatan Nasional / Internasional | 15s | 9:16 |
+| T070 | Rekrutmen Relawan | 15s | 9:16 |
+
+### 08 · Kreatif & Hiburan — `08-kreatif-hiburan.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T071 | Intro Channel YouTube | 8s | 16:9 |
+| T072 | Outro + End Screen YouTube | 15s | 16:9 |
+| T073 | Lyric Video Kinetic | 30s | 16:9 |
+| T074 | Trailer Film Pendek | 30s | 16:9 |
+| T075 | Intro Channel Gaming / Game Trailer | 20s | 16:9 |
+| T076 | Podcast Promo Audiogram | 20s | 9:16 |
+| T077 | Music Visualizer Teaser | 15s | 1:1 |
+| T078 | Vlog Opening Title | 10s | 16:9 |
+| T079 | Title Sequence Short Film (Opening Credits) | 25s | 16:9 |
+| T080 | Bumper / Lower Third Pack | 6s | 16:9 |
+
+### 09 · Kuliner, Travel & Lifestyle — `09-kuliner-travel-lifestyle.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T081 | Resep Cepat | 20s | 9:16 |
+| T082 | Promo Restoran / Menu Spesial | 15s | 9:16 |
+| T083 | Destinasi Wisata | 25s | 16:9 |
+| T084 | Hotel / Villa Promo | 20s | 16:9 |
+| T085 | Rutinitas Latihan Fitness | 20s | 9:16 |
+| T086 | Rutinitas Skincare | 20s | 9:16 |
+| T087 | Fashion Lookbook | 20s | 9:16 |
+| T088 | Tur Properti | 25s | 16:9 |
+| T089 | Showcase Otomotif | 20s | 16:9 |
+| T090 | Adopsi Hewan Peliharaan | 15s | 9:16 |
+
+### 10 · Infografis & Data — `10-infografis-data.md`
+| ID | Nama | Durasi | Rasio |
+|---|---|---|---|
+| T091 | Statistik Tahunan (Big Number) | 20s | 16:9 |
+| T092 | Perbandingan A vs B | 20s | 16:9 |
+| T093 | Timeline Proses | 25s | 16:9 |
+| T094 | Alur Bisnis / Funnel | 20s | 16:9 |
+| T095 | Cara Kerja Produk (Exploded View) | 25s | 16:9 |
+| T096 | Top 5 Ranking | 20s | 9:16 |
+| T097 | Peta Data Geografis | 20s | 16:9 |
+| T098 | Tren Harga (Line Chart) | 15s | 16:9 |
+| T099 | Hasil Survei | 20s | 16:9 |
+| T100 | Year in Review (Wrapped) | 30s | 9:16 |

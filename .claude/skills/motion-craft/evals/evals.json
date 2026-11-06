@@ -1,0 +1,33 @@
+{
+  "skill_name": "motion-craft",
+  "evals": [
+    {
+      "id": "eval-01-saas-launch-cursor-typing",
+      "prompt": "/motion-craft Buat video promo 12 detik (1920x1080, 30fps) untuk produk SaaS AI Assistant. Tampilkan UI chat dan input di tengah dengan kamera yang zoom halus mengikuti ketikan dan kursor yang mengklik tombol Publish, lalu transisi seamless ke tampilan 3 window desktop. Subtitle narasi wajib rapi di bawah.",
+      "expected_checks": [
+        "Menggunakan BottomSubtitleBar di bagian bawah layar (tidak menaruh subtitle besar di tengah layar)",
+        "Menggunakan splineAt untuk kamera yang zoom mengikuti ketikan TypeText dan AnimatedCursor tanpa camera shake",
+        "Menggunakan SeamlessSceneShell (overlap 10 frame) untuk perpindahan antar-scene yang halus",
+        "Lulus node scripts/lint.mjs tanpa emoji dan tanpa Math.random()"
+      ]
+    },
+    {
+      "id": "eval-02-vertical-reel-split-flap",
+      "prompt": "/motion-craft Buat video Reels 9:16 (1080x1920) durasi 10 detik tentang jadwal keberangkatan kereta cepat dengan gaya #10 (Split Flap) dan backsound B24.",
+      "expected_checks": [
+        "Memilih Gaya #10 Split Flap di research/style-bible.md",
+        "Mensintesis audio B24 dan SFX via scripts/synth-audio.mjs",
+        "Visual papan keberangkatan menjadi fokus utama di tengah, subtitle berada di area aman bawah"
+      ]
+    },
+    {
+      "id": "eval-03-replication-100-percent",
+      "prompt": "/motion-craft Replikasi 100% sama persis video referensi ./ref.mp4 di Remotion, ukur dengan splineAt dan buktikan dengan skor SSIM dan PSNR.",
+      "expected_checks": [
+        "Mengekstrak metadata ffprobe dan frame referensi",
+        "Merekonstruksi kurva kamera dengan splineAt(frame, CAM) dan huruf dengan FlyText / TypeText",
+        "Menjalankan verifikasi SSIM dan PSNR menggunakan ffmpeg"
+      ]
+    }
+  ]
+}
