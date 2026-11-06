@@ -9,7 +9,6 @@ build/
 project/*/out/
 **/out/storyboard/
 **/out/qa-stills/
-sample/
 
 # ── Audio hasil generate script ────────────────
 # bed/music/sfx-track masing-masing ±11,5 MB, dibuat ulang lewat synth-audio.mjs
