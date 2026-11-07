@@ -117,3 +117,7 @@ Folder `.claude/skills/` berisi skill untuk Claude Code:
 
 - Hasil render (`project/*/out/`, `sample/`), `node_modules/`, dan audio hasil generate tidak di-commit (lihat `.gitignore`). Render ulang untuk mendapatkannya kembali.
 - Angka persen pada counter di video pemulihan air bersifat ilustrasi dan selalu diberi badge **ILUSTRASI**.
+
+## REF
+- [Google Ai Studio](https://aistudio.google.com/generate-speech?model=gemini-3.8-flash-tts)
+-

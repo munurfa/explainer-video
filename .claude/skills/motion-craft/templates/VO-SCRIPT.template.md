@@ -1,7 +1,10 @@
 # Naskah VO — <judul video>
 - Bahasa: id
 - Profil: N01
-<!-- Profil: N01–N05 Edge TTS (gratis), N06–N08 ElevenLabs (butuh ELEVENLABS_API_KEY). Pilih lewat voice-samples.mjs. -->
+<!-- Profil: N01–N05 Edge TTS (gratis), N06–N08 ElevenLabs (butuh ELEVENLABS_API_KEY),
+     N09–N11 atau gemini:<Nama> Gemini TTS (butuh GEMINI_API_KEY di .env). Pilih lewat voice-samples.mjs. -->
+<!-- - Gaya: warm, friendly explainer narrator, relaxed conversational pace
+     (opsional, khusus Gemini: arahan gaya bicara. Hapus "<!--" agar aktif sebagai baris "- Gaya: ...") -->
 
 <!--
 Salin ke research/vo-script.md. Format heading scene:  ## S<n> · <mulai>–<selesai> · <tag>

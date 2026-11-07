@@ -1,22 +1,38 @@
 /**
  * scripts/lib/tts.mjs
- * Lapisan TTS bersama: Edge TTS (gratis, WordBoundary asli) dan ElevenLabs (with-timestamps),
- * plus forced alignment WhisperX untuk audio rekaman yang sudah ada.
+ * Lapisan TTS bersama: Edge TTS (gratis, WordBoundary asli), ElevenLabs (with-timestamps),
+ * Gemini TTS (Google AI Studio, gaya bicara lewat prompt), plus forced alignment untuk audio yang sudah ada.
  *
  * Urutan sumber timing (paling akurat dulu):
- *   1. elevenlabs-alignment  (ElevenLabs /with-timestamps, butuh ELEVENLABS_API_KEY)
- *   2. edge-wordboundary     (Edge TTS, butuh `pip install edge-tts`)
- *   3. whisperx              (audio sudah ada: --audio, butuh `pip install whisperx`)
- *   4. estimate-scaled       (estimasi wpm diskalakan ke durasi audio asli)
- *   5. estimate-wpm          (tanpa audio sama sekali; hanya untuk draf)
+ *   1. elevenlabs-alignment     (ElevenLabs /with-timestamps, butuh ELEVENLABS_API_KEY)
+ *   2. edge-wordboundary        (Edge TTS, butuh `pip install edge-tts`)
+ *   3. gemini+whisperx / gemini+faster-whisper
+ *                               (Gemini tidak memberi timestamp kata: audio penuh di-align ulang)
+ *   4. whisperx                 (audio sudah ada: --audio, butuh `pip install whisperx`)
+ *   5. gemini-estimate-segment  (Gemini tanpa aligner: batas segmen asli, kata di dalamnya estimasi)
+ *   6. estimate-scaled          (estimasi wpm diskalakan ke durasi audio asli)
+ *   7. estimate-wpm             (tanpa audio sama sekali; hanya untuk draf)
+ *
+ * API key dibaca dari environment atau file .env di folder project (cwd).
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// .env di folder project (GEMINI_API_KEY, ELEVENLABS_API_KEY). Variabel yang sudah ada tidak ditimpa.
+try {
+  if (fs.existsSync('.env')) process.loadEnvFile('.env');
+} catch {
+  /* .env tidak terbaca: key tetap bisa diset lewat environment */
+}
+
+export const geminiKey = () => process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
+export const GEMINI_TTS_MODEL = process.env.GEMINI_TTS_MODEL || 'gemini-3.8-flash-tts';
 
 export const VOICE_PROFILES = {
   N01: { provider: 'edge', voice: 'id-ID-ArdiNeural', rate: '+5%', pitch: '-2Hz', lang: 'id', desc: 'Editorial Hangat (ID Pria)' },
@@ -29,7 +45,36 @@ export const VOICE_PROFILES = {
   N06: { provider: 'elevenlabs', voice: 'pNInz6obpgDQGcFmaJgB', lang: 'id', desc: 'ElevenLabs Adam — pria dalam, naratif' },
   N07: { provider: 'elevenlabs', voice: '21m00Tcm4TlvDq8ikWAM', lang: 'id', desc: 'ElevenLabs Rachel — wanita tenang, jelas' },
   N08: { provider: 'elevenlabs', voice: 'ErXwobaYiR8mE1cMBnKB', lang: 'id', desc: 'ElevenLabs Antoni — pria hangat, energik' },
+  // Gemini TTS (Google AI Studio, butuh GEMINI_API_KEY). 30 suara preset, bahasa Indonesia didukung.
+  // `style` = arahan gaya bicara (prompt). Timpa per video dengan `- Gaya:` di vo-script.md atau --gemini-style.
+  // Suara lain: --voices gemini:<Nama> (mis. gemini:Achird) atau narrator-sync --gemini-voice <Nama>.
+  N09: {
+    provider: 'gemini', voice: 'Charon', lang: 'id', desc: 'Gemini Charon — pria informatif, naratif',
+    style: 'warm, clear and trustworthy explainer narrator, relaxed conversational pace, like a friendly neighbour explaining something useful',
+  },
+  N10: {
+    provider: 'gemini', voice: 'Sulafat', lang: 'id', desc: 'Gemini Sulafat — wanita hangat, ramah',
+    style: 'warm and friendly female narrator, calm and reassuring, conversational, smiling voice',
+  },
+  N11: {
+    provider: 'gemini', voice: 'Puck', lang: 'id', desc: 'Gemini Puck — pria ceria, energik',
+    style: 'upbeat and energetic social-media narrator, lively but not shouting, casual and fun',
+  },
 };
+
+/** Profil dari id (N09) atau `gemini:<Voice>` / `eleven:<voice_id>`. */
+export function resolveProfile(v, lang = 'id') {
+  if (v.startsWith('eleven:')) {
+    return { key: v.slice(7), profile: { provider: 'elevenlabs', voice: v.slice(7), lang, desc: `ElevenLabs ${v.slice(7)}` } };
+  }
+  if (v.startsWith('gemini:')) {
+    const voice = v.slice(7);
+    return { key: `G-${voice}`, profile: { provider: 'gemini', voice, lang, desc: `Gemini ${voice}`, style: VOICE_PROFILES.N09.style } };
+  }
+  const p = VOICE_PROFILES[v.toUpperCase()];
+  if (!p) throw new Error(`Profil ${v} tidak dikenal. Pilihan: ${Object.keys(VOICE_PROFILES).join(', ')}, gemini:<Nama> atau eleven:<voice_id>.`);
+  return { key: v.toUpperCase(), profile: p };
+}
 
 /** Pengaruh penanda naskah terhadap prosodi tiap provider. */
 const MOOD = {
@@ -43,9 +88,15 @@ const MOOD = {
     semangat: { stability: 0.3, style: 0.55 },
     pelan: { stability: 0.7, style: 0.05 },
   },
+  gemini: {
+    normal: '',
+    semangat: 'more excited and energetic, slightly faster',
+    pelan: 'slower and more deliberate, emphasising each word',
+  },
 };
 
-const PY = process.platform === 'win32' ? 'python' : 'python3';
+// MOTION_PY: path python.exe lain untuk edge-tts / whisperx / faster-whisper (mis. venv Python 3.12).
+const PY = process.env.MOTION_PY || (process.platform === 'win32' ? 'python' : 'python3');
 
 function run(cmd, args, opts = {}) {
   const r = spawnSync(cmd, args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, ...opts });
@@ -185,8 +236,115 @@ async function synthEleven(profile, seg, base, opts) {
   return { audio: mp3, bounds, source: 'elevenlabs-alignment' };
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** Cari blok audio base64 terakhir di respons Gemini (Interactions API atau generateContent). */
+function findAudioB64(node) {
+  let found = null;
+  const walk = (n) => {
+    if (!n || typeof n !== 'object') return;
+    if (Array.isArray(n)) return n.forEach(walk);
+    const mime = n.mime_type || n.mimeType || '';
+    if (typeof n.data === 'string' && n.data.length > 100 && (/audio/.test(mime) || n.type === 'audio')) found = { data: n.data, mime };
+    for (const v of Object.values(n)) walk(v);
+  };
+  walk(node);
+  return found;
+}
+
+async function geminiFetch(url, body, key) {
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'x-goog-api-key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) return { ok: true, json: await res.json() };
+    const text = (await res.text()).slice(0, 400);
+    if ((res.status === 429 || res.status >= 500) && attempt < 4) {
+      const ra = Number(res.headers.get('retry-after'));
+      const wait = ra > 0 ? ra * 1000 : 3000 * 2 ** attempt;
+      console.warn(`[tts] Gemini ${res.status}, coba lagi dalam ${Math.round(wait / 1000)} dtk...`);
+      await sleep(wait);
+      continue;
+    }
+    return { ok: false, status: res.status, text };
+  }
+}
+
+/**
+ * Gemini TTS -> WAV. Hasil di-cache per (model, suara, gaya, teks) di out/.tts/gemini-cache:
+ * Gemini tidak deterministik, jadi take yang sudah disetujui tidak berubah saat skrip dijalankan ulang.
+ * Pakai --gemini-fresh (atau hapus cache) untuk generate ulang.
+ */
+async function synthGemini(profile, seg, base, opts) {
+  const key = geminiKey();
+  if (!key) throw new Error('GEMINI_API_KEY tidak ada (environment atau .env project)');
+  const model = opts.geminiModel || GEMINI_TTS_MODEL;
+  const voice = opts.geminiVoice || profile.voice;
+  const style = [opts.geminiStyle || profile.style, MOOD.gemini[seg.mood], 'Speak natural, everyday Bahasa Indonesia with correct Indonesian pronunciation']
+    .filter(Boolean)
+    .join('. ');
+
+  const cacheDir = path.resolve('out/.tts/gemini-cache');
+  fs.mkdirSync(cacheDir, { recursive: true });
+  const hash = createHash('sha1').update(JSON.stringify([model, voice, style, seg.text])).digest('hex').slice(0, 16);
+  const cached = path.join(cacheDir, `${hash}.wav`);
+  const wav = `${base}.gemini.wav`;
+  if (fs.existsSync(cached) && !opts.geminiFresh) {
+    fs.copyFileSync(cached, wav);
+    return { audio: wav, bounds: null, source: 'gemini' };
+  }
+
+  const root = 'https://generativelanguage.googleapis.com/v1beta';
+  // Skema resmi model 3.8: Interactions API.
+  let r = await geminiFetch(
+    `${root}/interactions`,
+    {
+      model,
+      input: [{ type: 'user_input', content: [{ type: 'text', text: seg.text, annotations: [{ type: 'speech_metadata', style }] }] }],
+      response_format: { type: 'audio' },
+      generation_config: { speech_config: [{ voice }] },
+    },
+    key
+  );
+  // Model lama (2.5 / preview) yang tidak ada di Interactions API: coba generateContent.
+  if (!r.ok && (r.status === 404 || r.status === 400)) {
+    const first = r;
+    r = await geminiFetch(
+      `${root}/models/${model}:generateContent`,
+      {
+        contents: [{ parts: [{ text: `Say in this style (${style}): ${seg.text}` }] }],
+        generationConfig: {
+          responseModalities: ['AUDIO'],
+          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
+        },
+      },
+      key
+    );
+    if (!r.ok) throw new Error(`Gemini ${first.status}: ${first.text} | generateContent ${r.status}: ${r.text}`);
+  } else if (!r.ok) {
+    throw new Error(`Gemini ${r.status}: ${r.text}`);
+  }
+
+  const audio = findAudioB64(r.json);
+  if (!audio) throw new Error(`Respons Gemini tanpa audio: ${JSON.stringify(r.json).slice(0, 300)}`);
+  const buf = Buffer.from(audio.data, 'base64');
+  if (buf.subarray(0, 4).toString('ascii') === 'RIFF') fs.writeFileSync(wav, buf);
+  else {
+    // PCM mentah (audio/L16): 16-bit LE mono, rate dari mime bila ada (default 24 kHz)
+    const rate = Number((audio.mime.match(/rate=(\d+)/) || [])[1]) || 24000;
+    const pcm = `${base}.gemini.pcm`;
+    fs.writeFileSync(pcm, buf);
+    run('ffmpeg', ['-y', '-v', 'error', '-f', 's16le', '-ar', String(rate), '-ac', '1', '-i', pcm, wav]);
+  }
+  fs.copyFileSync(wav, cached);
+  return { audio: wav, bounds: null, source: 'gemini' };
+}
+
 export async function synthSegment(profile, seg, base, opts = {}) {
   if (profile.provider === 'elevenlabs') return synthEleven(profile, seg, base, opts);
+  if (profile.provider === 'gemini') return synthGemini(profile, seg, base, opts);
   return synthEdge(profile, seg, base);
 }
 
@@ -224,7 +382,10 @@ export async function synthScript(script, profile, opts) {
       const wav = `${base}.wav`;
       toWav(r.audio, wav);
       const dur = probeDurationMs(wav);
-      const mapped = mapBoundariesToTokens(seg.text.split(/\s+/), r.bounds, dur);
+      // Tanpa timestamp dari engine (Gemini): estimasi di dalam segmen, batas segmen tetap asli.
+      const mapped = r.bounds
+        ? mapBoundariesToTokens(seg.text.split(/\s+/), r.bounds, dur)
+        : estimateWords(seg.text.split(/\s+/), { targetMs: Math.max(1, dur - 60) });
       for (const w of mapped) words.push({ text: w.text, startMs: cursor + w.startMs, endMs: cursor + w.endMs, scene: sc.id });
       parts.push(wav);
       cursor += dur;
@@ -250,7 +411,55 @@ export async function synthScript(script, profile, opts) {
   fs.mkdirSync(path.dirname(outAudio), { recursive: true });
   const codec = outAudio.endsWith('.mp3') ? ['-c:a', 'libmp3lame', '-b:a', '192k'] : ['-c:a', 'pcm_s16le'];
   run('ffmpeg', ['-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-ar', '48000', ...codec, outAudio]);
-  return { words, sceneSpans, totalMs: probeDurationMs(outAudio), source };
+  const totalMs = probeDurationMs(outAudio);
+
+  if (source === 'gemini') {
+    source = 'gemini-estimate-segment';
+    const lang = (profile.lang || 'id').slice(0, 2);
+    const aligned = opts.align === 'none' ? null : alignAny(outAudio, words.map((w) => w.text).join(' '), lang, opts.align);
+    if (aligned) {
+      const mapped = mapBoundariesToTokens(words.map((w) => w.text), aligned.bounds, totalMs);
+      // Terima hasil align hanya bila urutannya maju dan kata tetap di dalam scene-nya.
+      const ok = mapped.every((w, i) => {
+        const sp = sceneSpans.find((s) => s.id === words[i].scene);
+        const inScene = !sp || (w.startMs >= sp.voStartMs - 400 && w.startMs <= sp.voEndMs + 400);
+        return inScene && (i === 0 || w.startMs >= mapped[i - 1].startMs - 50);
+      });
+      if (ok) {
+        mapped.forEach((w, i) => Object.assign(words[i], { startMs: w.startMs, endMs: w.endMs }));
+        source = `gemini+${aligned.engine}`;
+      } else {
+        console.warn(`[tts] hasil ${aligned.engine} tidak cocok dengan batas scene; tetap pakai estimasi per segmen.`);
+      }
+    }
+  }
+  return { words, sceneSpans, totalMs, source };
+}
+
+/**
+ * Align naskah ke audio dengan aligner Python yang tersedia.
+ * prefer: 'whisperx' | 'faster-whisper' | 'auto'/undefined. Mengembalikan null bila tidak ada atau gagal.
+ */
+export function alignAny(audio, text, lang, prefer) {
+  const order = prefer && prefer !== 'auto' ? [prefer] : ['whisperx', 'faster-whisper'];
+  for (const engine of order) {
+    try {
+      if (engine === 'whisperx' && hasPython('whisperx')) return { engine, bounds: alignWithWhisperX(audio, text, lang) };
+      if (engine === 'faster-whisper' && hasPython('faster_whisper')) return { engine, bounds: alignWithFasterWhisper(audio, text, lang) };
+    } catch (err) {
+      console.warn(`[tts] ${engine} gagal: ${err.message.split('\n')[0]}`);
+    }
+  }
+  return null;
+}
+
+/** Timestamp kata dari faster-whisper (transkripsi + word_timestamps, naskah sebagai initial prompt). */
+export function alignWithFasterWhisper(audio, text, lang) {
+  const json = path.resolve('out/.tts/faster-whisper-words.json');
+  fs.mkdirSync(path.dirname(json), { recursive: true });
+  const model = process.env.WHISPER_MODEL || 'small';
+  run(PY, [path.join(__dirname, 'faster_whisper_words.py'), '--audio', audio, '--text', text, '--lang', lang, '--model', model, '--json', json]);
+  return JSON.parse(fs.readFileSync(json, 'utf8'));
 }
 
 /** Forced alignment naskah ke audio yang sudah ada (WhisperX). */

@@ -1,6 +1,6 @@
 ---
 name: motion-craft
-description: "After Effects-grade Motion Graphics Designer & Seamless Video Editor di Remotion: replika UI aplikasi/browser/terminal autentik, logo brand/project asli (<BrandLogo /> + fetch-brand-logo.mjs), SFX terikat langsung ke animasi (ketikan, loading progress, klik kursor, transisi), kamera C1 spline tenang tanpa shake, tanpa background teks/pill sampah, dan tanpa titik bulat/ikon dekoratif. Alur bertahap dengan approval gate: klarifikasi, riset tren opsional, storyboard + contact sheet, naskah VO ber-budget kata, sampel suara (Edge/ElevenLabs), timing kata asli, render 9:16 safe zone, SRT + caption/hashtag/judul/jam posting."
+description: "After Effects-grade Motion Graphics Designer & Seamless Video Editor di Remotion: replika UI aplikasi/browser/terminal autentik, logo brand/project asli (<BrandLogo /> + fetch-brand-logo.mjs), SFX terikat langsung ke animasi (ketikan, loading progress, klik kursor, transisi), kamera C1 spline tenang tanpa shake, tanpa background teks/pill sampah, dan tanpa titik bulat/ikon dekoratif. Alur bertahap dengan approval gate: klarifikasi, riset tren opsional, storyboard + contact sheet, naskah VO ber-budget kata, sampel suara (Edge/ElevenLabs/Gemini), timing kata asli, render 9:16 safe zone, SRT + caption/hashtag/judul/jam posting."
 ---
 
 # /motion-craft — After Effects-Grade Motion Graphics & Authentic UI Engine for Remotion
@@ -138,17 +138,27 @@ Wajib PASS (budget kata, hook di S1 selesai <= 3 dtk, CTA di scene terakhir, tan
 
 ### Stage 4 — Suara Narator & VO Penuh (timing kata asli)
 ```bash
-# 4a. tiga sampel kalimat hook: ElevenLabs N06–N08 bila ELEVENLABS_API_KEY ada, selain itu Edge N01–N03 (en: N04, N05)
+# 4a. tiga sampel kalimat hook. Prioritas default: Gemini N09–N11 bila GEMINI_API_KEY ada,
+#     lalu ElevenLabs N06–N08 bila ELEVENLABS_API_KEY ada, selain itu Edge N01–N03 (en: N04, N05)
 node "<skill>/scripts/voice-samples.mjs" --script research/vo-script.md
+node "<skill>/scripts/voice-samples.mjs" --script research/vo-script.md --voices N09,N10,N01   # campur provider
 ```
-**[STOP – TUNGGU APPROVAL]** user memilih A/B/C; tulis profilnya ke `- Profil:` di naskah.
+**[STOP – TUNGGU APPROVAL]** user memilih A/B/C; tulis profilnya ke `- Profil:` di naskah (mis. `N09` atau `gemini:Achird`).
 ```bash
-# 4b. VO penuh + timestamp kata ASLI (Edge WordBoundary / ElevenLabs alignment; audio rekaman: --audio + WhisperX)
+# 4b. VO penuh + timestamp kata ASLI (Edge WordBoundary / ElevenLabs alignment / Gemini + faster-whisper; audio rekaman: --audio + WhisperX)
 node "<skill>/scripts/narrator-sync.mjs" --script research/vo-script.md --tts --out-audio public/audio/narration.mp3
 node "<skill>/scripts/vo-lint.mjs" --script research/vo-script.md --timing research/vo-timing.json
 node "<skill>/scripts/scenes.mjs" --timing research/vo-timing.json --brief "<topik>" --out research   # durasi scene ikut VO asli
 node "<skill>/scripts/synth-audio.mjs" --bgm B26 --duration <totalFrames/30> --fps 30 --out public/audio   # atau fetch-music.mjs --song M03
 ```
+**Gemini TTS (Google AI Studio)** — profil `N09` Charon (pria informatif), `N10` Sulafat (wanita hangat), `N11` Puck (pria ceria), atau `gemini:<Nama>` untuk 30 suara preset lain.
+- Key: buat sendiri di aistudio.google.com, tulis `GEMINI_API_KEY=...` di `.env` folder project (sudah di-ignore git). Jangan pernah tulis key di naskah atau kode.
+- Gaya bicara: baris `- Gaya: <arahan>` di `vo-script.md` (bahasa Inggris paling stabil, mis. `warm, friendly neighbour from Tegal, relaxed pace`) atau `--gemini-style`. Penanda `[semangat]`/`[pelan]` menambah arahan per segmen.
+- Model: default `gemini-3.8-flash-tts`; ganti lewat `GEMINI_TTS_MODEL` atau `--gemini-model` (mis. `gemini-3.8-flash-lite-tts`).
+- Hasil di-cache di `out/.tts/gemini-cache/` karena Gemini tidak deterministik: take yang disetujui tetap sama saat dijalankan ulang. `--gemini-fresh` untuk take baru.
+- Gemini tidak memberi timestamp kata. narrator-sync meng-align `narration.mp3` dengan faster-whisper (`pip install faster-whisper`) atau WhisperX bila terpasang (`MOTION_PY` = path python lain bila perlu). Tanpa aligner, sumber timing `gemini-estimate-segment` (batas kalimat asli, kata di dalamnya estimasi): boleh untuk preview, align dulu sebelum render final.
+- Tier gratis AI Studio: data bisa dipakai Google untuk memperbaiki produknya. Untuk naskah klien yang belum publik, pakai key dari project berbayar.
+
 Output: `public/words.json` (dipakai `<BottomSubtitleBar />` / `<KaraokePillCaption />`), `research/vo-timing.json` (pakai `startFrame`/`durationInFrames` tiap scene untuk `<Sequence>`), `research/word-map.md`. Jangan pakai estimasi wpm untuk render final. **[STOP – TUNGGU APPROVAL]** user mendengar `narration.mp3`.
 
 ### Stage 5 — Render & QA

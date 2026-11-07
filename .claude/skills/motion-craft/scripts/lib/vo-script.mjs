@@ -97,7 +97,7 @@ export function parseVoScript(raw) {
       cur = null;
       continue;
     }
-    const mm = line.match(/^-\s*(Bahasa|Profil|Judul|Provider)\s*:\s*(.+)$/i);
+    const mm = line.match(/^-\s*(Bahasa|Profil|Judul|Provider|Gaya)\s*:\s*(.+)$/i);
     if (!cur && mm) {
       meta[mm[1].toLowerCase()] = mm[2].trim();
       continue;

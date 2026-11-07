@@ -8,6 +8,12 @@
  *   node narrator-sync.mjs --script research/vo-script.md --profile N01 --tts
  *   # ElevenLabs (butuh ELEVENLABS_API_KEY), timestamp dari endpoint /with-timestamps
  *   node narrator-sync.mjs --script research/vo-script.md --profile N06 --tts
+ *   # Gemini TTS (butuh GEMINI_API_KEY di .env). Timestamp kata dari faster-whisper / WhisperX bila terpasang.
+ *   node narrator-sync.mjs --script research/vo-script.md --profile N09 --tts
+ *   node narrator-sync.mjs --script research/vo-script.md --profile gemini:Achird --gemini-style "..." --tts
+ *     --gemini-model <id>   (default GEMINI_TTS_MODEL atau gemini-3.8-flash-tts)
+ *     --gemini-fresh        abaikan cache take lama, generate ulang
+ *     --align auto|faster-whisper|whisperx|none
  *   # Audio rekaman sudah ada -> forced alignment WhisperX (bila terpasang), atau estimasi diskalakan ke durasi audio
  *   node narrator-sync.mjs --script research/vo-script.md --audio public/audio/vo.wav
  *   # Draf cepat tanpa audio (timing hanya estimasi)
@@ -26,9 +32,11 @@ import {
   VOICE_PROFILES,
   alignWithWhisperX,
   estimateWords,
+  geminiKey,
   hasPython,
   mapBoundariesToTokens,
   probeDurationMs,
+  resolveProfile,
   synthScript,
 } from './lib/tts.mjs';
 import { WPS_BUDGET, loadVoScript, singleSceneScript } from './lib/vo-script.mjs';
@@ -52,6 +60,11 @@ function parseArgs(argv) {
     sceneGapMs: 250,
     tailMs: 1200,
     elevenVoice: null,
+    geminiVoice: null,
+    geminiStyle: null,
+    geminiModel: null,
+    geminiFresh: false,
+    align: 'auto',
     outWords: 'public/words.json',
     outMap: 'research/word-map.md',
     outTiming: 'research/vo-timing.json',
@@ -62,7 +75,12 @@ function parseArgs(argv) {
     const v = argv[i + 1];
     if (k === '--text' && v) a.text = v;
     if (k === '--script' && v) a.script = v;
-    if (k === '--profile' && v) a.profile = v.toUpperCase();
+    if (k === '--profile' && v) a.profile = /^(gemini|eleven):/i.test(v) ? v : v.toUpperCase();
+    if (k === '--gemini-voice' && v) a.geminiVoice = v;
+    if (k === '--gemini-style' && v) a.geminiStyle = v;
+    if (k === '--gemini-model' && v) a.geminiModel = v;
+    if (k === '--gemini-fresh') a.geminiFresh = true;
+    if (k === '--align' && v) a.align = v;
     if (k === '--tts') a.tts = true;
     if (k === '--audio' && v) a.audio = v;
     if (k === '--wpm' && v) a.wpm = Number(v);
@@ -89,7 +107,18 @@ if (!script.scenes.length) {
   console.error('[narrator-sync] Naskah tidak punya heading scene "## S1 · 0–3". Lihat templates/VO-SCRIPT.template.md');
   process.exit(2);
 }
-let profile = VOICE_PROFILES[opts.profile] || VOICE_PROFILES.N01;
+// Profil: --profile, lalu `- Profil:` di naskah, lalu N01.
+const profileArgGiven = process.argv.includes('--profile');
+const profileId = profileArgGiven ? opts.profile : script.meta.profil?.split(/\s/)[0] || opts.profile;
+let profileKey = profileId;
+let profile;
+try {
+  ({ key: profileKey, profile } = resolveProfile(profileId, script.meta.bahasa || 'id'));
+} catch {
+  profileKey = 'N01';
+  profile = VOICE_PROFILES.N01;
+}
+if (!opts.geminiStyle && script.meta.gaya) opts.geminiStyle = script.meta.gaya;
 const lang = (script.meta.bahasa || profile.lang || 'id').slice(0, 2).toLowerCase();
 
 /** Estimasi per segmen dengan jeda naskah, opsional diskalakan ke durasi audio asli. */
@@ -136,8 +165,14 @@ const notes = [];
 
 if (opts.tts) {
   if (profile.provider === 'elevenlabs' && !process.env.ELEVENLABS_API_KEY) {
-    notes.push(`ELEVENLABS_API_KEY tidak ada; ${opts.profile} diganti N01 (Edge TTS).`);
+    notes.push(`ELEVENLABS_API_KEY tidak ada; ${profileKey} diganti N01 (Edge TTS).`);
     profile = VOICE_PROFILES.N01;
+    profileKey = 'N01';
+  }
+  if (profile.provider === 'gemini' && !geminiKey()) {
+    notes.push(`GEMINI_API_KEY tidak ada; ${profileKey} diganti N01 (Edge TTS).`);
+    profile = VOICE_PROFILES.N01;
+    profileKey = 'N01';
   }
   if (profile.provider === 'edge' && !hasPython('edge_tts')) {
     notes.push('Modul Python edge_tts tidak ada (pip install edge-tts); timing jatuh ke estimasi wpm.');
@@ -146,6 +181,12 @@ if (opts.tts) {
       result = await synthScript(script, profile, { ...opts, tmpDir: 'out/.tts' });
       source = result.source;
       audioFile = opts.outAudio;
+      if (source === 'gemini-estimate-segment') {
+        notes.push(
+          'Gemini tidak memberi timestamp kata dan aligner tidak tersedia: batas kalimat asli, kata di dalamnya estimasi. ' +
+            'Pasang `pip install faster-whisper` (atau set MOTION_PY ke python yang punya modul itu), lalu jalankan ulang (audio dipakai dari cache).'
+        );
+      }
     } catch (err) {
       notes.push(`TTS gagal (${err.message.split('\n')[0]}); timing jatuh ke estimasi wpm.`);
     }
@@ -221,7 +262,10 @@ const totalMs = scenes.at(-1).endMs;
 const timing = {
   source,
   provider: audioFile && opts.tts ? profile.provider : null,
-  profile: opts.tts ? Object.keys(VOICE_PROFILES).find((k) => VOICE_PROFILES[k] === profile) : opts.profile,
+  profile: profileKey,
+  ...(profile.provider === 'gemini' && opts.tts
+    ? { gemini: { voice: opts.geminiVoice || profile.voice, style: opts.geminiStyle || profile.style, model: opts.geminiModel || process.env.GEMINI_TTS_MODEL || 'gemini-3.8-flash-tts' } }
+    : {}),
   audio: audioFile,
   lang,
   fps,
@@ -259,7 +303,7 @@ write(
   `# Peta Kata Narasi (Word Map)
 
 - **Profil Suara:** ${timing.profile} — ${profile.desc}
-- **Sumber timing:** \`${source}\`${source.startsWith('estimate') ? ' (ESTIMASI: jangan dipakai untuk render final, sintesis ulang dengan --tts atau align dengan --audio)' : ''}
+- **Sumber timing:** \`${source}\`${source.includes('estimate') ?' (ESTIMASI: jangan dipakai untuk render final, sintesis ulang dengan --tts atau align dengan --audio)' : ''}
 - **Total:** ${words.length} kata · ${(totalMs / 1000).toFixed(2)} s · ${timing.totalFrames} frame @ ${fps} fps
 ${notes.map((n) => `- Catatan: ${n}`).join('\n')}
 
