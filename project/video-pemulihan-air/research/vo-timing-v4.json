@@ -1,0 +1,184 @@
+{
+  "source": "gemini+faster-whisper",
+  "provider": "gemini",
+  "profile": "G-Laomedeia",
+  "gemini": {
+    "voice": "Laomedeia",
+    "style": "young cheerful Indonesian woman in her early twenties, warm and friendly like a helpful neighbour, relaxed conversational pace, smiling voice, clear articulation",
+    "model": "gemini-3.8-flash-tts"
+  },
+  "audio": "public/audio/narration-v4.mp3",
+  "lang": "id",
+  "fps": 30,
+  "wpsBudget": 2.5,
+  "totalMs": 60000,
+  "totalFrames": 1800,
+  "scenes": [
+    {
+      "id": "S1",
+      "tags": [
+        "hook"
+      ],
+      "plannedSec": [
+        0,
+        3
+      ],
+      "startMs": 0,
+      "endMs": 3175,
+      "voStartMs": 92,
+      "voEndMs": 2753,
+      "startFrame": 0,
+      "durationInFrames": 95,
+      "words": 7,
+      "wordsPerSec": 2.63
+    },
+    {
+      "id": "S2",
+      "tags": [],
+      "plannedSec": [
+        3,
+        5
+      ],
+      "startMs": 3175,
+      "endMs": 5490,
+      "voStartMs": 3313,
+      "voEndMs": 4903,
+      "startFrame": 95,
+      "durationInFrames": 69,
+      "words": 4,
+      "wordsPerSec": 2.52
+    },
+    {
+      "id": "S3",
+      "tags": [],
+      "plannedSec": [
+        5,
+        15
+      ],
+      "startMs": 5490,
+      "endMs": 13785,
+      "voStartMs": 5629,
+      "voEndMs": 13693,
+      "startFrame": 165,
+      "durationInFrames": 249,
+      "words": 22,
+      "wordsPerSec": 2.73
+    },
+    {
+      "id": "S4",
+      "tags": [],
+      "plannedSec": [
+        15,
+        21
+      ],
+      "startMs": 13785,
+      "endMs": 19735,
+      "voStartMs": 13924,
+      "voEndMs": 19643,
+      "startFrame": 414,
+      "durationInFrames": 178,
+      "words": 11,
+      "wordsPerSec": 1.92
+    },
+    {
+      "id": "S5",
+      "tags": [],
+      "plannedSec": [
+        21,
+        30
+      ],
+      "startMs": 19735,
+      "endMs": 27550,
+      "voStartMs": 19873,
+      "voEndMs": 27458,
+      "startFrame": 592,
+      "durationInFrames": 234,
+      "words": 21,
+      "wordsPerSec": 2.77
+    },
+    {
+      "id": "S6",
+      "tags": [],
+      "plannedSec": [
+        30,
+        40
+      ],
+      "startMs": 27550,
+      "endMs": 35655,
+      "voStartMs": 27689,
+      "voEndMs": 35563,
+      "startFrame": 826,
+      "durationInFrames": 243,
+      "words": 24,
+      "wordsPerSec": 3.05
+    },
+    {
+      "id": "S7",
+      "tags": [],
+      "plannedSec": [
+        40,
+        46
+      ],
+      "startMs": 35655,
+      "endMs": 41406,
+      "voStartMs": 35794,
+      "voEndMs": 41313,
+      "startFrame": 1070,
+      "durationInFrames": 173,
+      "words": 13,
+      "wordsPerSec": 2.36
+    },
+    {
+      "id": "S8",
+      "tags": [],
+      "plannedSec": [
+        46,
+        54
+      ],
+      "startMs": 41406,
+      "endMs": 49100,
+      "voStartMs": 41544,
+      "voEndMs": 49008,
+      "startFrame": 1242,
+      "durationInFrames": 231,
+      "words": 16,
+      "wordsPerSec": 2.14
+    },
+    {
+      "id": "S9",
+      "tags": [],
+      "plannedSec": [
+        54,
+        62
+      ],
+      "startMs": 49100,
+      "endMs": 56071,
+      "voStartMs": 49238,
+      "voEndMs": 55979,
+      "startFrame": 1473,
+      "durationInFrames": 209,
+      "words": 18,
+      "wordsPerSec": 2.67
+    },
+    {
+      "id": "S10",
+      "tags": [
+        "cta"
+      ],
+      "plannedSec": [
+        62,
+        66
+      ],
+      "startMs": 56071,
+      "endMs": 60000,
+      "voStartMs": 56210,
+      "voEndMs": 58893,
+      "startFrame": 1682,
+      "durationInFrames": 118,
+      "words": 6,
+      "wordsPerSec": 2.24
+    }
+  ],
+  "tempo": 1.0838,
+  "note": "v4: narasi v3 dipercepat (atempo) agar tepat 60 dtk"
+}

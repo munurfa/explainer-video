@@ -4,6 +4,8 @@
  * reservoir jauh & tinggi (z negatif), rumah pelanggan dekat & rendah (z positif).
  * Kamera berada di sisi +x atas, sehingga bidang potong [-1,0,0] membuang separuh pipa yang menghadap kamera.
  */
+import { T } from './timeline';
+
 export type V3 = [number, number, number];
 export type CamKey = [number, number, number, number, number, number, number, number];
 
@@ -73,46 +75,55 @@ export const MAIN_LEN = polyLen(MAIN);
 export const DIST_LEN = polyLen(DIST);
 export const COUPLING: V3 = pointAt(MAIN, arcAtVertex(MAIN, 1) + dist(MAIN[1], MAIN[2]) / 2);
 
-/* ---------------- waktu (selaras narasi) ---------------- */
+/* ---------------- waktu (selaras narasi, jadwal di timeline.ts) ---------------- */
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
-const lin = (f: number, a: number, b: number) => clamp01((f - a) / (b - a));
+export const lin = (f: number, a: number, b: number) => clamp01((f - a) / (b - a));
+const span = (f: number, s: readonly [number, number]) => lin(f, s[0], s[1]);
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const smoother = (t: number) => t * t * t * (t * (t * 6 - 15) + 10);
 const expoOut = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 
 export type Seg = [number, number];
-/** Air mulai tampil (adegan pembuka belum ada air di jaringan) */
-export const waterOpacityAt = (f: number) => lin(f, 188, 212);
+/** Air mulai tampil bersamaan dengan cutaway */
+export const waterOpacityAt = (f: number) => smooth(span(f, T.cut));
 /** Pembukaan katup: 1 = terbuka */
-export const valveOpenAt = (f: number) => (f < 600 ? 1 - smooth(lin(f, 538, 562)) : smooth(lin(f, 632, 664)));
+export const valveOpenAt = (f: number) =>
+  f < T.valveOpen[0] ? 1 - smooth(span(f, T.valveClose)) : smooth(span(f, T.valveOpen));
 /** Jarak busur katup gerbang di pipa utama. Hulu katup selalu penuh. */
 export const GATE_S = GATE_Z - MAIN[0][2];
 /** Bagian hilir katup yang berisi air (jarak busur di MAIN) */
 export function mainSeg(f: number): Seg {
-  const span = MAIN_LEN - GATE_S;
-  if (f < 545) return [GATE_S, MAIN_LEN];
-  if (f < 640) return [GATE_S + smoother(lin(f, 545, 602)) * span, MAIN_LEN];
-  return [GATE_S, GATE_S + smoother(lin(f, 640, 722)) * span];
+  const len = MAIN_LEN - GATE_S;
+  if (f < T.recedeMain[0]) return [GATE_S, MAIN_LEN];
+  if (f < T.fillMain[0]) return [GATE_S + smoother(span(f, T.recedeMain)) * len, MAIN_LEN];
+  return [GATE_S, GATE_S + smoother(span(f, T.fillMain)) * len];
 }
 export function distSeg(f: number): Seg {
-  if (f < 545) return [0, DIST_LEN];
-  if (f < 640) return [smoother(lin(f, 555, 612)) * DIST_LEN, DIST_LEN];
-  return [0, smoother(lin(f, 722, 806)) * DIST_LEN];
+  if (f < T.recedeDist[0]) return [0, DIST_LEN];
+  if (f < T.fillMain[0]) return [smoother(span(f, T.recedeDist)) * DIST_LEN, DIST_LEN];
+  return [0, smoother(span(f, T.fillDist)) * DIST_LEN];
+}
+/** Muka air saat mengisi: [jaringan, jarak busur] untuk FlowArrow yang mengikuti air */
+export function fillFront(f: number): { net: 'main' | 'dist'; s: number } {
+  if (f < T.fillDist[0]) return { net: 'main', s: mainSeg(f)[1] };
+  return { net: 'dist', s: distSeg(f)[1] };
 }
 export function pressureAt(f: number): number {
-  if (f < 190) return 0.04;
-  if (f < 545) return 0.04 + 0.74 * lin(f, 190, 214);
-  if (f < 1090) return 0.78 * (1 - smoother(lin(f, 545, 605)));
-  return 0.78 * expoOut(lin(f, 1090, 1150));
+  if (f < T.cut[0]) return 0.04;
+  if (f < T.recedeMain[0]) return 0.04 + 0.74 * span(f, T.cut);
+  if (f < T.pressureUp[0]) return 0.78 * (1 - smoother(span(f, T.recedeMain)));
+  return 0.78 * expoOut(span(f, T.pressureUp));
 }
 /** Kecepatan arus 0..1 (garis arus) */
 export const flowOn = (f: number, startAfterRepair: number) =>
-  f < 600 ? lin(f, 212, 232) * (1 - lin(f, 528, 545)) : lin(f, startAfterRepair, startAfterRepair + 20);
+  f < T.valveOpen[0]
+    ? span(f, T.flowLines) * (1 - span(f, [T.valveClose[0] + 12, T.valveClose[1]]))
+    : lin(f, startAfterRepair, startAfterRepair + 20);
 /** Bidang potong jaringan: 0 = utuh, 1 = terbelah di tengah */
-export const cutAt = (f: number) => smooth(lin(f, 200, 222));
+export const cutAt = (f: number) => smooth(span(f, T.cut));
 /** Keran: air mengalir lagi */
-export const tapFlowAt = (f: number) => lin(f, 1170, 1180);
-export const sinkFillAt = (f: number) => smooth(lin(f, 1180, 1240));
+export const tapFlowAt = (f: number) => span(f, T.tapFlow);
+export const sinkFillAt = (f: number) => smooth(span(f, T.sinkFill));
 
 /* ---------------- kamera (C1 spline, tanpa shake) ---------------- */
 type K7 = [number, number, number, number, number, number, number];
@@ -122,31 +133,54 @@ function orbit(t: V3, az: number, el: number, d: number, fov: number): K7 {
   const e = (el * Math.PI) / 180;
   return [t[0] + d * Math.cos(e) * Math.sin(a), t[1] + d * Math.sin(e), t[2] + d * Math.cos(e) * Math.cos(a), t[0], t[1], t[2], fov];
 }
-const lerpK = (a: K7, b: K7, t: number) => a.map((v, i) => v + (b[i] - v) * t) as K7;
-/** Satu shot = dua waypoint + dua waypoint peredam, supaya spline tidak overshoot di dalam shot */
-function shot(f0: number, f1: number, a: K7, b: K7): CamKey[] {
-  const pad = Math.min(12, (f1 - f0) / 4);
-  return [
-    [f0, ...a],
-    [f0 + pad, ...lerpK(a, b, pad / (f1 - f0))],
-    [f1 - pad, ...lerpK(a, b, 1 - pad / (f1 - f0))],
-    [f1, ...b],
-  ];
-}
 const TAP_T: V3 = [-1.75, 0.74, HOUSE.z];
-const WIDE_T: V3 = [-1.2, 1.45, -0.1];
+const WIDE_T: V3 = [-0.7, 1.45, -0.1];
+const TANK_T: V3 = [0, TANK.y + 0.6, TANK.z];
 const VALVE_T: V3 = [0, 2.45, -3.6];
 const HUMP_T: V3 = [0, 1.8, -1.45];
 const GAUGE_T: V3 = [0, 0.9, 1.25];
-const FOLLOW_T: V3 = [-1.0, 0.6, 2.0];
-export const CAM3D: CamKey[] = [
-  ...shot(0, 148, orbit(TAP_T, 66, 13, 4.0, 42), orbit(TAP_T, 64, 13, 3.7, 42)),
-  ...shot(205, 496, orbit(WIDE_T, 24, 32, 18.4, 44), orbit(WIDE_T, 20, 32, 17.8, 44)),
-  ...shot(532, 646, orbit(VALVE_T, 68, 28, 5.6, 42), orbit(VALVE_T, 63, 28, 5.2, 42)),
-  [705, ...orbit([0, 1.1, -0.4], 40, 42, 10.0, 44)],
-  ...shot(758, 816, orbit(FOLLOW_T, 28, 50, 13.2, 44), orbit(FOLLOW_T, 25, 50, 12.6, 44)),
-  ...shot(852, 1062, orbit(HUMP_T, 72, 18, 3.4, 42), orbit(HUMP_T, 66, 18, 3.1, 42)),
-  ...shot(1096, 1140, orbit(GAUGE_T, 60, 12, 2.6, 42), orbit(GAUGE_T, 58, 12, 2.4, 42)),
-  ...shot(1170, 1216, orbit(TAP_T, 66, 13, 3.9, 42), orbit(TAP_T, 64, 13, 3.7, 42)),
-  ...shot(1256, 1885, orbit(WIDE_T, 24, 32, 18.4, 44), orbit(WIDE_T, 16, 33, 18.8, 44)),
-];
+
+export const POSE = {
+  TAP: orbit(TAP_T, 65, 13, 3.8, 42),
+  O: orbit(WIDE_T, 18, 32, 18.4, 44),
+  TANK: orbit(TANK_T, 50, 24, 6.0, 42),
+  VALVE: orbit(VALVE_T, 66, 28, 5.4, 42),
+  HUMP: orbit(HUMP_T, 70, 18, 3.3, 42),
+  GAUGE: orbit(GAUGE_T, 60, 12, 2.5, 42),
+};
+type PoseName = keyof typeof POSE;
+
+/**
+ * Kamera diam-gerak-diam. Tiap gerak dari satu pose diam ke pose diam berikutnya; dua key identik
+ * berturut-turut membuat tangen nol, jadi gerak = smoothstep tanpa overshoot. Tidak ada zoom antarbagian:
+ * semua bab lewat O.
+ */
+function moves(start: PoseName, list: [readonly [number, number], PoseName][]): CamKey[] {
+  const keys: CamKey[] = [[0, ...POSE[start]]];
+  let cur = start;
+  for (const [[a, b], to] of list) {
+    keys.push([a, ...POSE[cur]]);
+    keys.push([b, ...POSE[to]]);
+    cur = to;
+  }
+  keys.push([100000, ...POSE[cur]]);
+  return keys;
+}
+export const CAM3D: CamKey[] = moves('TAP', [
+  [T.camToO1, 'O'],
+  [T.camToTank, 'TANK'],
+  [T.camTankToO, 'O'],
+  [T.camToValve, 'VALVE'],
+  [T.camValveToO, 'O'],
+  [T.camToHump, 'HUMP'],
+  [T.camHumpToO, 'O'],
+  [T.camToGauge, 'GAUGE'],
+  [T.camGaugeToO, 'O'],
+  [T.camToTap, 'TAP'],
+  [T.camTapToO, 'O'],
+]);
+/** true saat kamera sedang bergerak (aturan satu penggerak per beat) */
+export const camMoving = (f: number) =>
+  [T.camToO1, T.camToTank, T.camTankToO, T.camToValve, T.camValveToO, T.camToHump, T.camHumpToO, T.camToGauge, T.camGaugeToO, T.camToTap, T.camTapToO].some(
+    ([a, b]) => f > a && f < b,
+  );
