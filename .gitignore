@@ -14,6 +14,7 @@ project/*/out/
 # bed/music/sfx-track masing-masing ±11,5 MB, dibuat ulang lewat synth-audio.mjs
 project/*/public/audio/bed.wav
 project/*/public/audio/music.wav
+project/*/public/audio/music-*.wav
 project/*/public/audio/sfx-track.wav
 # narration.mp3 & words.json SENGAJA tidak di-ignore (hasil TTS bisa sedikit
 # berbeda tiap generate, sehingga timing animasi bisa bergeser)

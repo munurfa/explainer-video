@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Panduan untuk AI coding agent (Claude Code, Codex, Cursor, dll.) yang bekerja di repo ini.
+Panduan untuk AI coding agent (**OpenCode** dan Claude Code) yang bekerja di repo ini. **File ini adalah sumber tunggal aturan.** OpenCode membaca file ini langsung (dan mengabaikan `CLAUDE.md` karena `AGENTS.md` ada). `CLAUDE.md` hanya meng-import file ini untuk Claude Code, jadi ubah aturan di sini saja.
 
 ## Ringkasan
 
@@ -8,14 +8,57 @@ Workspace video explainer / motion graphics berbasis **Remotion 4.0.220 + React 
 
 ```
 explainer/
-├── .claude/skills/              # motion-craft, remotion-*, tiray-brand-kit
+├── AGENTS.md                    # aturan semua agent (file ini)
+├── .claude/skills/              # skill: motion-craft, remotion-*, tiray-brand-kit (lihat bagian Skill)
 ├── project/
 │   ├── style-samples/           # katalog gaya visual, 2 rasio per gaya
-│   └── video-pemulihan-air/     # video explainer 9:16 untuk Tirta Ayu
+│   ├── video-pemulihan-air/     # video explainer 9:16 untuk Tirta Ayu
+│   └── video-launch-tiray/      # video peluncuran aplikasi Tiray
 └── sample/                      # hasil render sampel gaya (NN-slug/)
 ```
 
 Tiap folder di `project/` adalah project npm sendiri. Jalankan perintah dari dalam folder project itu, bukan dari root.
+
+## Skill
+
+Skill di repo ini tersimpan di `.claude/skills/<nama>/SKILL.md`. OpenCode menemukannya otomatis (folder `.claude/skills` termasuk lokasi yang dipindai OpenCode) dengan ID = nama folder, mis. `motion-craft`. Claude Code juga memuatnya otomatis.
+
+1. Cocokkan tugas dengan tabel di bawah. Kalau cocok, **muat skill itu dulu sebelum menulis kode atau file apa pun**: di OpenCode panggil tool `skill` dengan `{"id": "<nama>"}`; di Claude Code pakai Skill tool. Ikuti instruksinya seolah bagian dari AGENTS.md ini.
+2. Kalau user menulis `/motion-craft` atau `@motion-craft` (begitu juga `tiray-brand-kit`, `remotion-render`, dst.), artinya: muat skill itu dan jalankan alurnya. Kalau tool `skill` tidak tersedia (mis. `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1`), baca `.claude/skills/<nama>/SKILL.md` manual.
+3. File pendukung skill **tidak ikut termuat otomatis**. Baca sendiri file yang disebut `SKILL.md` saat stage-nya tiba (`references/…`, `templates/…`, `./remotion-create/REFERENCE.md`). Path relatif dihitung dari folder skill itu. Placeholder `<skill>` di perintah = path folder skill. Karena perintah dijalankan dari `project/video-<topik>/`, bentuknya: `node ../../.claude/skills/motion-craft/scripts/vo-lint.mjs --script research/vo-script.md`.
+4. Kalau aturan di skill bertentangan dengan AGENTS.md, **AGENTS.md yang menang** (mis. versi Remotion dikunci `4.0.220`, lokasi folder project).
+5. Jangan menyalin skill ke `.opencode/skills/` atau folder lain. Di OpenCode, skill dengan ID sama di `.opencode/skills/` akan menimpa versi `.claude/skills/` dan keduanya jadi tidak sinkron. `.claude/skills/` adalah satu-satunya sumber.
+
+| Skill | Pakai saat | Baca dulu |
+|---|---|---|
+| `motion-craft` | Membuat/merevisi video explainer atau motion graphics apa pun. Alur bertahap dengan approval gate, aturan anti-slop, SFX, VO, safe zone, deliverables. | `.claude/skills/motion-craft/SKILL.md` → lalu `references/AUDIENS-AWAM.md`, `references/STYLES.md`, `references/SOUND.md` sesuai stage |
+| `tiray-brand-kit` | Apa pun yang menyentuh logo, warna, font, copy, fitur aplikasi, atau outro Tirta Ayu / Tiray. **Wajib dimuat sebelum** menyentuh aset brand. | `.claude/skills/tiray-brand-kit/SKILL.md` (aset di `brand-kit/`) |
+| `remotion-best-practices` | Router semua pengetahuan API Remotion. Mulai dari sini kalau ragu skill Remotion mana. | `.claude/skills/remotion-best-practices/SKILL.md` |
+| `remotion-markup` | Menulis komponen/animasi/efek/audio/transisi/font/3D di Remotion. | `.claude/skills/remotion-markup/SKILL.md` |
+| `remotion-captions` | Transkripsi, caption karaoke, impor SRT. | `.claude/skills/remotion-captions/SKILL.md` |
+| `remotion-render` | Render/export video (termasuk transparan). | `.claude/skills/remotion-render/SKILL.md` |
+| `remotion-studio` | Membuka preview Remotion Studio. | `.claude/skills/remotion-studio/SKILL.md` |
+| `remotion-create` | Scaffold project/komposisi Remotion baru (pakai bersama `motion-craft` → `scripts/scaffold-remotion.mjs`). | `.claude/skills/remotion-create/SKILL.md` |
+| `remotion-maps` | Peta, rute animasi, flyover geografis. | `.claude/skills/remotion-maps/SKILL.md` |
+| `remotion-multimedia` | Durasi/dimensi audio-video, Mediabunny. | `.claude/skills/remotion-multimedia/SKILL.md` |
+| `remotion-interactivity` | Struktur markup agar bisa diedit di Studio. | `.claude/skills/remotion-interactivity/SKILL.md` |
+| `remotion-docs` | Mencari dokumentasi Remotion terbaru. | `.claude/skills/remotion-docs/SKILL.md` |
+| `remotion-upgrade` | Upgrade paket Remotion. **Jangan dipakai tanpa izin user** (versi dikunci 4.0.220). | `.claude/skills/remotion-upgrade/SKILL.md` |
+| `remotion-saas`, `remotion-license` | Membangun app di atas Remotion / info lisensi. Jarang dipakai di repo ini. | `SKILL.md` masing-masing |
+
+Catatan: skill `remotion-*` ditulis untuk Remotion versi terbaru. Kalau contoh API-nya tidak ada di 4.0.220, ikuti API 4.0.220 dan jangan upgrade paket.
+
+**Jangan menebak API Remotion dari ingatan.** Baca skill `remotion-*` yang relevan dulu.
+
+## Aturan Kerja Agent
+
+- **Approval gate itu nyata.** Di setiap `[STOP – TUNGGU APPROVAL]` pada skill motion-craft: tunjukkan bukti stage itu, berhenti, dan tunggu jawaban user. Agent non-interaktif (mis. `opencode run`) yang tidak bisa bertanya: selesaikan sampai gate berikutnya saja, lalu laporkan dan berhenti. Jangan lompat langsung ke render.
+- **Konfirmasi nama folder** `project/video-<topik>/` ke user sebelum membuat file project baru.
+- **Preview** pakai Remotion Studio (`npm run studio` di folder project). Cek hasil dengan render still di frame kunci dari storyboard sebelum render penuh.
+- **Render penuh lama** (beberapa menit). Jalankan di background / dengan timeout panjang, jangan sampai terpotong.
+- **Rahasia:** API key (`GEMINI_API_KEY`, `ELEVENLABS_API_KEY`) hanya di `.env` folder project. Jangan ditulis di naskah, kode, log, atau commit.
+- **Python untuk alignment kata** (faster-whisper/WhisperX): skrip memakai env `MOTION_PY` kalau di-set, selain itu `python` di PATH.
+- **Perubahan user di luar percakapan** jangan ditimpa. Anggap disengaja, atau tanya dulu.
 
 ## ATURAN WAJIB: Lokasi Project Video Baru
 
