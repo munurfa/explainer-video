@@ -1,8 +1,8 @@
-# STORYBOARD INDEX — 100 Template Storyboard untuk Remotion
+# STORYBOARD INDEX — 103 Template Storyboard untuk Remotion
 
-Katalog 100 template storyboard di 10 kategori untuk skill `/motion-craft`. Tiap template adalah rencana scene (waktu, visual, motion, kamera, transisi, SFX) yang sudah mematuhi aturan skill. Agent memilih satu template, menyalinnya, lalu mengadaptasinya ke brief.
+Katalog 103 template storyboard di 11 kategori untuk skill `/motion-craft`. Tiap template adalah rencana scene (waktu, visual, motion, kamera, transisi, SFX) yang sudah mematuhi aturan skill. Agent memilih satu template, menyalinnya, lalu mengadaptasinya ke brief.
 
-> Baca file kategori yang dipilih saja, jangan memuat semua 10 file sekaligus.
+> Baca file kategori yang dipilih saja, jangan memuat semua 11 file sekaligus.
 
 ---
 
@@ -249,3 +249,11 @@ node "<skill>/scripts/scenes.mjs" --template T032 --brief "Demo SaaS AI Dashboar
 | T098 | Tren Harga (Line Chart) | 15s | 16:9 |
 | T099 | Hasil Survei | 20s | 16:9 |
 | T100 | Year in Review (Wrapped) | 30s | 9:16 |
+
+### 11 · Apple-Inspired Interactive (gaya #45) — `11-apple-interactive.md`
+
+| ID | Judul | Durasi | Rasio |
+|---|---|---|---|
+| T101 | Tutorial Interaktif | 12s | 16:9 |
+| T102 | Intro Brand Interaktif | 10s | 16:9 |
+| T103 | Edukasi Sebab–Akibat Interaktif | 15s | 16:9 |

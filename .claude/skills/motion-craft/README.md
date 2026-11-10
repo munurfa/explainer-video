@@ -232,9 +232,11 @@ motion-craft/
 │   ├── sfx/                              # 49 file rekaman studio SFX CC0 (.wav)
 │   └── songs/                            # 8 lagu BGM pre-bundled (.wav)
 ├── references/
-│   ├── STYLES.md                         # Indeks utama 43 gaya desain visual
-│   ├── styles/                           # 43 file spesifikasi rinci (01-cyberpunk.md .. 43-motion-reel-editorial.md)
-│   ├── storyboards/                      # INDEX.md + 10 file kategori (100 template T001-T100)
+│   ├── STYLES.md                         # Indeks utama 45 gaya desain visual
+│   ├── styles/                           # 45 file spesifikasi rinci (01-cyberpunk.md .. 45-apple-inspired-product-cinema.md)
+│   ├── storyboards/                      # INDEX.md + 11 file kategori (103 template T001-T103)
+│   ├── SCENE-COMPONENTS.md               # Komponen scene tambahan (DepthShots, InterfaceFrames, AppleInteractive, dst.)
+│   ├── style-sfx.json                    # Peta ID gaya -> cue SFX material
 │   ├── CARD-GRID-3D-PATTERNS.md          # Dokumentasi 19 komponen 3D Card, Grid, & Card Interaction
 │   ├── SOUND.md                          # Katalog 64 lagu BGM & 65+ Studio SFX
 │   ├── CAMERA-SCENES-NARRATOR.md         # Dokumentasi C1 Spline Camera & 5 profil narator
@@ -247,7 +249,10 @@ motion-craft/
 │   ├── synth-audio.mjs                   # Synthesizer 48kHz WAV (40 lagu B00-B39 + 65 SFX)
 │   ├── fetch-music.mjs                   # Downloader 24 lagu studio royalty-free (M01-M24)
 │   ├── lint.mjs                          # Static Anti-Slop Linter (0 emoji, 0 shake, 0 filler icon)
-│   ├── inspect-motion.mjs                # Safe-Zone & Bounding-Box Camera Spline Inspector
+│   ├── inspect-motion.mjs                # Safe-Zone & Bounding-Box Camera Spline Inspector (+ --geometry, --require-complete)
+│   ├── qa-geometry.mjs                   # Cek kotak objek terukur (keluar layar, menimpa subtitle)
+│   ├── evaluate-video.mjs                # Verifikasi metadata render + SSIM opsional terhadap acuan
+│   ├── material-sfx.mjs                  # Generator 12 SFX material (paper-feed, glass-contact, water-bloom, ...)
 │   └── run-evals.mjs                     # Automated Benchmark Suite (5 pengujian menyeluruh)
 └── templates/
     ├── STORYBOARD.template.md            # Template kosong rencana storyboard
@@ -265,7 +270,7 @@ motion-craft/
     │   └── ProceduralBackground.tsx      # Latar prosedural bersih sesuai gaya
     └── theme/
         ├── easing-and-timing.ts          # Fungsi splineAt, springAt, staggeredSpringAt, microBob
-        └── styles-catalog.ts             # Preset data ringkas ke-43 gaya desain
+        └── styles-catalog.ts             # Preset data ringkas ke-45 gaya desain
 ```
 
 ### Menjalankan Benchmark Uji Skill

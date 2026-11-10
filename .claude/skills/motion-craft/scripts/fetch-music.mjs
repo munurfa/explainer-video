@@ -13,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import https from 'node:https';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 
 export const STUDIO_SONGS_CATALOG = [
   // High Energy, Launches, & Tech Reels
@@ -119,13 +119,13 @@ if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` || proc
     console.log(`[fetch-music] Downloading "${selected.title}" by ${selected.artist} (${selected.bpm} BPM)...`);
     const buf = await downloadBuffer(mp3Url);
     fs.writeFileSync(tmpMp3, buf);
-    execSync(`ffmpeg -y -v error -i "${tmpMp3}" -t ${opts.duration} -ar 48000 -ac 2 -c:a pcm_s16le "${outWav}"`);
+    execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', tmpMp3, '-t', String(opts.duration), '-ar', '48000', '-ac', '2', '-c:a', 'pcm_s16le', outWav]);
     fs.unlinkSync(tmpMp3);
     console.log(`[fetch-music] Saved 48kHz stereo WAV to ${outWav}`);
   } catch (err) {
     if (fs.existsSync(tmpMp3)) fs.unlinkSync(tmpMp3);
     console.log(`[fetch-music] Network/download unavailable (${err.message}). Falling back to procedural song synthesis...`);
     const synthScript = path.join(path.dirname(process.argv[1]), 'synth-audio.mjs');
-    execSync(`node "${synthScript}" --bgm B26 --duration ${opts.duration} --out "${path.dirname(outWav)}"`, { stdio: 'inherit' });
+    execFileSync(process.execPath, [synthScript, '--bgm', 'B26', '--duration', String(opts.duration), '--out', path.dirname(outWav)], { stdio: 'inherit' });
   }
 }

@@ -5,16 +5,28 @@
  * 1. Zero-Emoji Audit
  * 2. Remotion Determinism Audit
  * 3. Camera Spline Bounding-Box & Safe-Zone Inspector (Memastikan zoom/pan kamera tidak mendorong fokus keluar viewport atau menabrak BottomSubtitleBar)
- * 4. Keyframe Still Extractor (`npx remotion still`)
- * 5. Video & Audio QA (`freezedetect=-60dB`, `silencedetect=-50dB`)
+ * 4. Keyframe Still Extractor (`remotion still`) + measured geometry (--geometry, lihat qa-geometry.mjs)
+ * 5. Video & Audio QA (ffprobe stream, `freezedetect=-60dB`, `silencedetect=-50dB`; --allow-freeze / --allow-silence)
  * 6. Platform Safe Zone 9:16 (atas 15% = 0–288 px, bawah 20% = 1536–1920 px):
  *    - statis: bottomOffset/bottom subtitle & top judul yang masuk zona tertutup UI Reels/TikTok/Shorts
  *    - visual: --safe-zone menimpa still QA dengan pita merah zona tertutup (out/qa-stills/safezone-*.png)
+ *
+ * Status: PASS (semua cek jalan & lolos), PARTIAL (lolos tapi ada cek yang dilewati), FAIL.
+ * --require-complete: exit code 2 bila ada cek yang dilewati.
+ * Semua subprocess dipanggil dengan array argumen (tanpa string shell).
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { inspectGeometry } from './qa-geometry.mjs';
+
+// Pakai CLI Remotion lokal lewat node (tanpa shell). Fallback ke npx (shell hanya di Windows untuk npx.cmd).
+function runRemotion(args) {
+  const localCli = path.resolve(process.cwd(), 'node_modules/@remotion/cli/remotion-cli.js');
+  if (fs.existsSync(localCli)) return execFileSync(process.execPath, [localCli, ...args], { stdio: 'pipe' });
+  return execFileSync('npx', ['remotion', ...args], { stdio: 'pipe', shell: process.platform === 'win32' });
+}
 
 const EMOJI_REGEX = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/u;
 const FORBIDDEN_APIS = [
@@ -47,6 +59,10 @@ function parseArgs(argv) {
     safeZone: false,
     vertical: false,
     height: 1920,
+    geometryPath: null,
+    allowFreeze: false,
+    allowSilence: false,
+    requireComplete: false,
   };
   for (let i = 2; i < argv.length; i++) {
     const k = argv[i];
@@ -59,6 +75,10 @@ function parseArgs(argv) {
     if (k === '--safe-zone') args.safeZone = true;
     if (k === '--vertical') args.vertical = true;
     if (k === '--height' && v) args.height = Number(v);
+    if (k === '--geometry' && v) args.geometryPath = v;
+    if (k === '--allow-freeze') args.allowFreeze = true;
+    if (k === '--allow-silence') args.allowSilence = true;
+    if (k === '--require-complete') args.requireComplete = true;
   }
   return args;
 }
@@ -67,6 +87,8 @@ const opts = parseArgs(process.argv);
 const issues = [];
 const passes = [];
 const warnings = [];
+const skipped = [];
+let measuredObjects = 0;
 const SZ_TOP = Math.round(opts.height * 0.15); // 288 pada 1920
 const SZ_BOTTOM = Math.round(opts.height * 0.2); // 384 pada 1920
 let checkedSafeZone = 0;
@@ -161,58 +183,85 @@ if (issues.length === 0) {
   passes.push(`Platform Safe Zone 9:16 PASSED (${checkedSafeZone} posisi teks diperiksa; atas ${SZ_TOP}px, bawah ${SZ_BOTTOM}px).`);
 }
 
-if (opts.compId) {
+// Regex sumber tidak bisa memastikan batas render. Pakai geometri layar terukur bila ada.
+if (opts.geometryPath) {
+  try {
+    const result = inspectGeometry(JSON.parse(fs.readFileSync(opts.geometryPath, 'utf8')));
+    measuredObjects = result.checkedObjects;
+    issues.push(...result.issues);
+    if (!result.issues.length) passes.push(`Measured geometry PASSED (${measuredObjects} objek pada frame sampel).`);
+  } catch (err) {
+    issues.push(`[GEOMETRY ERROR] ${err.message}`);
+  }
+} else skipped.push('Rendered geometry: berikan --geometry berisi kotak objek terukur di layar (lihat scripts/qa-geometry.mjs).');
+
+if (opts.compId && opts.frames.length && opts.frames.every(Number.isFinite)) {
   const stillDir = path.resolve(process.cwd(), 'out/qa-stills');
   fs.mkdirSync(stillDir, { recursive: true });
   for (const f of opts.frames) {
     const outPng = path.join(stillDir, `frame-${String(f).padStart(4, '0')}.png`);
     try {
-      execSync(`npx remotion still "${opts.compId}" "${outPng}" --frame=${f}`, { stdio: 'pipe' });
+      runRemotion(['still', opts.compId, outPng, `--frame=${f}`]);
       passes.push(`Rendered keyframe still: ${path.relative(process.cwd(), outPng)}`);
       if (opts.safeZone) {
         const szPng = path.join(stillDir, `safezone-${String(f).padStart(4, '0')}.png`);
-        execSync(
-          `ffmpeg -y -v error -i "${outPng}" -vf "drawbox=x=0:y=0:w=iw:h=ih*0.15:color=red@0.35:t=fill,drawbox=x=0:y=ih*0.8:w=iw:h=ih*0.2:color=red@0.35:t=fill,drawbox=x=iw*0.88:y=ih*0.15:w=iw*0.12:h=ih*0.65:color=orange@0.25:t=fill" "${szPng}"`
-        );
+        execFileSync('ffmpeg', [
+          '-y', '-v', 'error', '-i', outPng,
+          '-vf', 'drawbox=x=0:y=0:w=iw:h=ih*0.15:color=red@0.35:t=fill,drawbox=x=0:y=ih*0.8:w=iw:h=ih*0.2:color=red@0.35:t=fill,drawbox=x=iw*0.88:y=ih*0.15:w=iw*0.12:h=ih*0.65:color=orange@0.25:t=fill',
+          szPng,
+        ], { stdio: 'pipe' });
         passes.push(`Safe-zone overlay (periksa: tidak ada teks penting di pita merah/oranye): ${path.relative(process.cwd(), szPng)}`);
       }
     } catch (err) {
       issues.push(`[STILL RENDER ERROR] Frame ${f}: ${err.message}`);
     }
   }
-}
+} else skipped.push('Still rendering: berikan --comp dan --frames yang valid.');
 
-if (opts.videoPath && fs.existsSync(opts.videoPath)) {
-  try {
-    const freezeOut = execSync(
-      `ffmpeg -i "${opts.videoPath}" -vf "freezedetect=n=-60dB:d=0.5" -an -f null - 2>&1`,
-      { encoding: 'utf8' }
-    );
-    if (freezeOut.includes('freeze_start')) {
-      issues.push(`[FREEZE DETECTED] Video memiliki bagian beku > 0.5 detik pada ambang -60dB.`);
-    } else {
-      passes.push(`Camera & Motion Freeze Test (-60dB, 0.5s) PASSED — layar selalu hidup.`);
+if (opts.videoPath) {
+  if (!fs.existsSync(opts.videoPath)) issues.push(`[MEDIA QA] Video tidak ditemukan: ${opts.videoPath}`);
+  else {
+    try {
+      const probe = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_streams', '-of', 'json', opts.videoPath], { encoding: 'utf8' }));
+      if (!probe.streams?.some((st) => st.codec_type === 'video')) issues.push('[MEDIA QA] Tidak ada stream video.');
+      const hasAudio = probe.streams?.some((st) => st.codec_type === 'audio');
+      if (!hasAudio) {
+        if (opts.allowSilence) warnings.push('[MEDIA QA] Tidak ada stream audio; video bisu diizinkan lewat --allow-silence.');
+        else issues.push('[MEDIA QA] Tidak ada stream audio; pakai --allow-silence hanya bila memang sengaja bisu.');
+      }
+      const tests = [
+        ['freeze', '-vf', 'freezedetect=n=-60dB:d=0.5', '-an', opts.allowFreeze,
+          'Camera & Motion Freeze Test (-60dB, 0.5s) PASSED, layar selalu hidup.',
+          'Video memiliki bagian beku > 0.5 detik pada ambang -60dB.'],
+        ['silence', '-af', 'silencedetect=n=-50dB:d=0.5', '-vn', opts.allowSilence,
+          'Audio Silence Test (-50dB, 0.5s) PASSED, tidak ada detik sunyi.',
+          'Audio memiliki bagian sunyi > 0.5 detik pada ambang -50dB.'],
+      ];
+      for (const [name, flag, filter, strip, allowed, okMsg, badMsg] of tests) {
+        if (name === 'silence' && !hasAudio) continue;
+        // Filter diagnostik FFmpeg menulis ke stderr walau sukses.
+        const res = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', opts.videoPath, flag, filter, strip, '-f', 'null', '-'], { encoding: 'utf8' });
+        if (res.error || res.status !== 0) throw new Error(res.error?.message || res.stderr || 'FFmpeg gagal.');
+        if (res.stderr.includes(`${name}_start`)) {
+          if (allowed) warnings.push(`[${name.toUpperCase()} DIIZINKAN] ${badMsg} Periksa jeda yang disengaja.`);
+          else issues.push(`[${name.toUpperCase()} DETECTED] ${badMsg} Pakai --allow-${name} hanya bila disengaja.`);
+        } else passes.push(okMsg);
+      }
+    } catch (err) {
+      issues.push(`[MEDIA QA ERROR] ${err.message}`);
     }
-  } catch {}
-
-  try {
-    const silenceOut = execSync(
-      `ffmpeg -i "${opts.videoPath}" -af "silencedetect=n=-50dB:d=0.5" -vn -f null - 2>&1`,
-      { encoding: 'utf8' }
-    );
-    if (silenceOut.includes('silence_start')) {
-      issues.push(`[SILENCE DETECTED] Audio memiliki bagian sunyi > 0.5 detik pada ambang -50dB.`);
-    } else {
-      passes.push(`Audio Silence Test (-50dB, 0.5s) PASSED — tidak ada detik sunyi.`);
-    }
-  } catch {}
-}
+  }
+} else skipped.push('Media QA: berikan --video setelah render.');
 
 console.log(
   JSON.stringify(
     {
-      status: issues.length === 0 ? 'PASS' : 'FAIL',
+      status: issues.length ? 'FAIL' : skipped.length ? 'PARTIAL' : 'PASS',
+      scope: 'Cek otomatis hanya pada frame sampel; review visual tetap wajib.',
+      scannedFiles: filesToScan.length,
+      measuredObjects,
       passes,
+      skipped,
       warnings,
       issues,
     },
@@ -221,6 +270,5 @@ console.log(
   )
 );
 
-if (issues.length > 0) {
-  process.exitCode = 1;
-}
+if (issues.length) process.exitCode = 1;
+else if (opts.requireComplete && skipped.length) process.exitCode = 2;

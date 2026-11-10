@@ -54,7 +54,9 @@ export type StudioSfxName =
   | 'k1' | 'k2' | 'k3' | 'k4' | 'k5'
   | 'm1' | 'm2' | 'm3' | 'm4'
   | 'r1' | 'r2' | 'r3'
-  | 'o1' | 'o2' | 'o3' | 'o5';
+  | 'o1' | 'o2' | 'o3' | 'o5'
+  | 'paper-feed' | 'ink-stamp' | 'hinge-latch' | 'flap-train' | 'chalk-stroke' | 'bristle-swipe'
+  | 'vinyl-catch' | 'glass-contact' | 'rubber-flex' | 'air-valve' | 'water-bloom' | 'relay-switch';
 
 /**
  * Pemetaan otomatis jenis transisi ke Sound Effect Transisi Studio CC0 yang pas

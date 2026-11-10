@@ -16,6 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { MATERIAL_SFX, synthesizeMaterialSfx } from './material-sfx.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -617,6 +618,12 @@ if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` || proc
     const file = path.join(sfxOutDir, `${code.toLowerCase()}.wav`);
     const mono = synthesizePackSfx(code, 0, opts.seed);
     writeStereoWav(file, mono, mono);
+  }
+
+  // Material Foley deterministik (paper-feed, ink-stamp, glass-contact, dst.) untuk palet SFX per gaya.
+  for (const [name, recipe] of Object.entries(MATERIAL_SFX)) {
+    const mono = synthesizeMaterialSfx(recipe, SAMPLE_RATE, mulberry32(`${opts.seed}-${name}`));
+    writeStereoWav(path.join(sfxOutDir, `${name}.wav`), mono, mono);
   }
 
   // 3. Sintesis Room Tone Bed & Lagu Backsound Utama

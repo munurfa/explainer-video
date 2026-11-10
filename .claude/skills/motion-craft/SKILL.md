@@ -13,10 +13,11 @@ Dalam perintah di bawah, `<skill>` adalah folder tempat skill ini berada.
 > Jangan pernah membaca seluruh file di dalam `references/` atau `templates/` sekaligus! Hanya baca **1 file gaya yang terpilih** (`research/selected-style-guide.md`), **1 file storyboard yang dipakai** (`research/storyboard.md`), dan hanya `import` komponen di `templates/components/` yang benar-benar digunakan pada scene video.
 
 ### Referensi Teknis di Dalam Skill
-- `references/STYLES.md` — Indeks katalog 44 gaya desain visual & peta topik ke gaya.
-- `references/styles/01-cyberpunk.md` s/d `references/styles/44-kita-bedah.md` — **44 File Spesifikasi Rinci per Gaya** (masing-masing memuat tabel palet hex 60-20-10-7-3, skala tipografi 16:9 & 9:16, bahasa bentuk, rumus spring/easing, waypoint kamera `splineAt`, rekomendasi lagu `B00`–`B39` / `M01`–`M24` + SFX, contoh kode TSX lengkap, dan larangan anti-slop spesifik gaya tersebut). Wajib baca file gaya yang terpilih!
-- `references/storyboards/INDEX.md` & `references/storyboards/01-bisnis-promosi.md` s/d `10-infografis-data.md` — **100 Template Storyboard Siap Pakai (`T001`–`T100`)** di 10 kategori beserta `templates/STORYBOARD.template.md`. Setiap template sudah memetakan pembagian detik asimetris, gerak kamera (`HOLD`, `PUSH`, `TYPE`, `CURSOR`, `GLIDE`), transisi keluar (`WGL`, `WGU`, `PZI`, `SSU`, `MC`, `MORPH`), SFX terikat-animasi, dan rekomendasi komponen 3D/Grid/Card Interaction!
+- `references/STYLES.md` — Indeks katalog 45 gaya desain visual & peta topik ke gaya.
+- `references/styles/01-cyberpunk.md` s/d `references/styles/45-apple-inspired-product-cinema.md` — **45 File Spesifikasi Rinci per Gaya** (masing-masing memuat tabel palet hex 60-20-10-7-3, skala tipografi 16:9 & 9:16, bahasa bentuk, rumus spring/easing, waypoint kamera `splineAt`, rekomendasi lagu `B00`–`B39` / `M01`–`M24` + SFX, contoh kode TSX lengkap, dan larangan anti-slop spesifik gaya tersebut). Wajib baca file gaya yang terpilih!
+- `references/storyboards/INDEX.md` & `references/storyboards/01-bisnis-promosi.md` s/d `11-apple-interactive.md` — **103 Template Storyboard Siap Pakai (`T001`–`T103`)** di 11 kategori beserta `templates/STORYBOARD.template.md`. Setiap template sudah memetakan pembagian detik asimetris, gerak kamera (`HOLD`, `PUSH`, `TYPE`, `CURSOR`, `GLIDE`), transisi keluar (`WGL`, `WGU`, `PZI`, `SSU`, `MC`, `MORPH`), SFX terikat-animasi, dan rekomendasi komponen 3D/Grid/Card Interaction!
 - `references/CARD-GRID-3D-PATTERNS.md` — **19 Komponen Siap Pakai untuk 3D Card Layout, Grid Animation, & Card Interaction** (`Coverflow3D`, `FerrisWheelCards`, `CubeRoll3D`, `CylinderCards3D`, `HelixCards3D`, `SphereCards3D`, `ZDepthTunnel`, `BentoGridReveal`, `ExplodeToGrid`, `LayoutMorphGridToCarousel`, `MasonryZoomDetail`, `GridRecapZoomOut`, `CardStackSwipe`, `FanSpreadCards`, `PolaroidDropTable`, `CardFlip3D`, `PageCurlCard`, `PageTurnBook`, `AccordionFoldCard`) lengkap dengan SFX studio CC0 yang otomatis terikat ke setiap gerakan.
+- `references/SCENE-COMPONENTS.md` — Komponen scene tambahan (`DepthShots`, `EditorialText`, `GraphicSurfaces`, `InterfaceFrames`, `SceneEdits`, `ScreenActions`) beserta pemakaiannya; `AppleInteractive` dijelaskan di file gaya #45. `references/style-sfx.json` memetakan ID gaya ke cue SFX material (`paper-feed`, `ink-stamp`, `glass-contact`, `water-bloom`, dst.) yang dibuat `synth-audio.mjs` lewat `scripts/material-sfx.mjs`.
 - `references/SOUND.md` — Katalog 64 pilihan lagu backsound (**40 lagu prosedural multi-chord `B00`–`B39` + 24 lagu studio `M01`–`M24`**), **65+ Studio SFX CC0 & Pack Tematik** (termasuk 9 SFX transisi studio baru), standar `-14 LUFS`, & auto-ducking.
 - `references/CAMERA-SCENES-NARRATOR.md` — Arsitektur tata letak Konten vs Subtitle, kamera C1 spline (`splineAt`), transisi seamless, & 8 profil narator (`N01`–`N05` Edge TTS, `N06`–`N08` ElevenLabs), safe zone platform.
 - `references/AUDIENS-AWAM.md` — **Panduan penonton awam (default semua video)**: bahasa sehari-hari, maks 3 istilah teknis yang wajib dijelaskan, analogi per konsep, tunjukkan-jangan-hanya-sebut, struktur penjelasan, cek pemahaman, contoh tulis ulang. Wajib dibaca di Stage 2 dan 3.
@@ -168,6 +169,12 @@ node "<skill>/scripts/inspect-motion.mjs" --src src --comp MainVideo --frames 15
 npx remotion render MainVideo out/v1.mp4 --codec h264 --audio-codec aac
 node "<skill>/scripts/inspect-motion.mjs" --src src --video out/v1.mp4
 ```
+Status inspector: `PASS`, `PARTIAL` (ada cek yang dilewati karena `--comp`/`--frames`/`--video`/`--geometry` tidak diberikan), atau `FAIL`. Tambahan opsional:
+- `--geometry qa/geometry.json` memeriksa kotak objek terukur di layar (format di `scripts/qa-geometry.mjs`) yang diukur setelah transform kamera: objek keluar layar atau menimpa area subtitle.
+- `--require-complete` membuat exit code 2 bila ada cek yang dilewati (pakai untuk QA final).
+- `--allow-freeze` / `--allow-silence` mengubah freeze/sunyi yang disengaja menjadi warning, bukan issue.
+- `node "<skill>/scripts/evaluate-video.mjs" --project . --video out/v1.mp4 --width 1080 --height 1920 --frames <total> --fps 30` memverifikasi metadata render; tambah `--reference <file> --min-ssim 0.95` untuk membandingkan dengan render acuan yang sejajar.
+
 Safe zone 9:16: atas 15% (0–288 px) dan bawah 20% (1536–1920 px) bebas teks penting, kanan 12% bebas teks. **[STOP – TUNGGU APPROVAL]** tunjukkan `out/v1.mp4` + still `out/qa-stills/safezone-*.png`.
 
 ### Stage 6 — Deliverables

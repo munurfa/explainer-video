@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * scripts/draw-style.mjs
- * Pemilih Gaya Otomatis & Generator Style Bible (43 Gaya dari STYLES.md)
+ * Pemilih Gaya Otomatis & Generator Style Bible (45 Gaya dari STYLES.md)
  * - Membaca brief/topik dan kata kunci literal
  * - Mengecek research/style-log.md agar tidak mengulang 2 proyek terakhir
  * - Mengundi 3 kandidat teratas, memilih pemenang, dan menulis research/style-bible.md
@@ -59,6 +59,8 @@ const STYLE_INDEX = [
   { id: 41, name: 'Cat Air', bgm: 'B10', sfx: 'S-ORGANIK', bpm: 68, keywords: ['puisi', 'wellness', 'meditasi', 'lembut', 'organik', 'cat air'], colors: '#FBF7F0, #6A8CAF, #E7A5A5, #A8C69F', fonts: 'Cormorant + Patrick Hand', camera: 'dolly-lateral-parallax -> push-in-settle -> pull-out-monumental' },
   { id: 42, name: 'Krayon dan Pastel Minyak', bgm: 'B08', sfx: 'S-KERTAS + S-ORGANIK', bpm: 114, keywords: ['anak', 'paud', 'keluarga', 'krayon', 'menggambar'], colors: '#FFF9EC, #E63946, #F4A261, #2A9D8F', fonts: 'Gochi Hand + Patrick Hand', camera: 'dolly-lateral-parallax -> push-in-settle -> pull-out-monumental' },
   { id: 43, name: 'Motion Reel Editorial', bgm: 'B09', sfx: 'S-DIGITAL + S-MEKANIK', bpm: 122, keywords: ['promo', 'reel', 'portofolio', 'pitch', 'agency', 'jasa', 'produk digital', 'landing'], colors: '#F4EEE7, #0F110F, #FD5837, #C9DE4B', fonts: 'Instrument Serif + Hanken Grotesk + JetBrains Mono', camera: 'push-in-settle -> orbit-3d-inspect -> dolly-lateral-parallax -> crane-up-focus -> pull-out-monumental' },
+  { id: 44, name: 'Kita Bedah', bgm: 'B25', sfx: 'S-MEKANIK + S-ORGANIK', bpm: 96, keywords: ['cara kerja', 'kok bisa', 'cutaway', 'bedah', 'pdam', 'air minum', 'infrastruktur', 'layanan publik', 'mitos'], colors: '#F3F1EC, #16243B, #244DA9, #FFC20E', fonts: 'Poppins + JetBrains Mono', camera: 'orbit-3d-inspect -> push-in-settle -> pull-out-monumental' },
+  { id: 45, name: 'Apple-Inspired Interactive Motion', bgm: 'B25', sfx: 'S-SINEMA + S-MEKANIK', bpm: 116, keywords: ['tutorial aplikasi', 'demo fitur', 'interaktif', 'klik', 'intro brand', 'sebab akibat'], colors: '#0D0E10, #1B1D21, #F5F5F7, #8DB8FF', fonts: 'Inter', camera: 'push-in-settle -> dolly-lateral-parallax -> pull-out-monumental' },
 ];
 
 function parseArgs(argv) {

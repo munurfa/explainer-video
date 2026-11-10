@@ -13,6 +13,7 @@
  *   node narrator-sync.mjs --script research/vo-script.md --profile gemini:Achird --gemini-style "..." --tts
  *     --gemini-model <id>   (default GEMINI_TTS_MODEL atau gemini-3.8-flash-tts)
  *     --gemini-fresh        abaikan cache take lama, generate ulang
+ *     --tempo <0.8-1.3>     percepat/perlambat narasi (ffmpeg atempo, nada tetap). Tanpa request TTS baru
  *     --align auto|faster-whisper|whisperx|none
  *   # Audio rekaman sudah ada -> forced alignment WhisperX (bila terpasang), atau estimasi diskalakan ke durasi audio
  *   node narrator-sync.mjs --script research/vo-script.md --audio public/audio/vo.wav
@@ -64,6 +65,7 @@ function parseArgs(argv) {
     geminiStyle: null,
     geminiModel: null,
     geminiFresh: false,
+    tempo: 1,
     align: 'auto',
     outWords: 'public/words.json',
     outMap: 'research/word-map.md',
@@ -80,6 +82,7 @@ function parseArgs(argv) {
     if (k === '--gemini-style' && v) a.geminiStyle = v;
     if (k === '--gemini-model' && v) a.geminiModel = v;
     if (k === '--gemini-fresh') a.geminiFresh = true;
+    if (k === '--tempo' && v) a.tempo = Math.min(1.3, Math.max(0.8, Number(v) || 1));
     if (k === '--align' && v) a.align = v;
     if (k === '--tts') a.tts = true;
     if (k === '--audio' && v) a.audio = v;
