@@ -232,8 +232,8 @@ motion-craft/
 │   ├── sfx/                              # 49 file rekaman studio SFX CC0 (.wav)
 │   └── songs/                            # 8 lagu BGM pre-bundled (.wav)
 ├── references/
-│   ├── STYLES.md                         # Indeks utama 45 gaya desain visual
-│   ├── styles/                           # 45 file spesifikasi rinci (01-cyberpunk.md .. 45-apple-inspired-product-cinema.md)
+│   ├── STYLES.md                         # Indeks utama 46 gaya desain visual
+│   ├── styles/                           # 46 file spesifikasi rinci (01-cyberpunk.md .. 46-bedah-lapis.md)
 │   ├── storyboards/                      # INDEX.md + 11 file kategori (103 template T001-T103)
 │   ├── SCENE-COMPONENTS.md               # Komponen scene tambahan (DepthShots, InterfaceFrames, AppleInteractive, dst.)
 │   ├── style-sfx.json                    # Peta ID gaya -> cue SFX material
@@ -270,7 +270,7 @@ motion-craft/
     │   └── ProceduralBackground.tsx      # Latar prosedural bersih sesuai gaya
     └── theme/
         ├── easing-and-timing.ts          # Fungsi splineAt, springAt, staggeredSpringAt, microBob
-        └── styles-catalog.ts             # Preset data ringkas ke-45 gaya desain
+        └── styles-catalog.ts             # Preset data ringkas ke-46 gaya desain
 ```
 
 ### Menjalankan Benchmark Uji Skill

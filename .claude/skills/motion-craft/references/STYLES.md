@@ -1,12 +1,12 @@
-# STYLES.md — Indeks Katalog 45 Gaya Desain & Tautan File Spesifikasi Rinci
+# STYLES.md — Indeks Katalog 46 Gaya Desain & Tautan File Spesifikasi Rinci
 
-Setiap gaya memiliki **file Markdown spesifikasi teknis mandiri** di dalam folder `references/styles/01-cyberpunk.md` s/d `references/styles/45-apple-inspired-product-cinema.md`.
+Setiap gaya memiliki **file Markdown spesifikasi teknis mandiri** di dalam folder `references/styles/01-cyberpunk.md` s/d `references/styles/46-bedah-lapis.md`.
 
 > **WAJIB BACA FILE SPESIFIK GAYA:** Setelah memilih gaya menggunakan `scripts/draw-style.mjs`, agent **wajib membaca file `references/styles/<id>-<slug>.md`** yang sesuai sebelum menulis kode scene!
 
 ---
 
-## Direktori 45 File Spesifikasi Gaya (`references/styles/*.md`)
+## Direktori 46 File Spesifikasi Gaya (`references/styles/*.md`)
 
 | # | Nama Gaya & File Spesifikasi Rinci | Slug | Topik Utama | Palet Utama (BG / Accent) | Font Heading | Backsound Utama |
 |---|---|---|---|---|---|---|
@@ -55,6 +55,7 @@ Setiap gaya memiliki **file Markdown spesifikasi teknis mandiri** di dalam folde
 | **43** | [**Motion Reel Editorial**](styles/43-motion-reel-editorial.md) | `motion-reel-editorial` | promo jasa, portofolio, reel desainer, pitch produk digital | `#F4EEE7` / `#FD5837` | `Instrument Serif` | **B09** / **B25** |
 | **44** | [**Kita Bedah**](styles/44-kita-bedah.md) | `kita-bedah` | cara kerja benda, layanan publik dan infrastruktur, mitos vs fakta teknis, edukasi pelanggan | `#F3F1EC` / `#244DA9` | `Poppins` | **B25** / **B09** |
 | **45** | [**Apple-Inspired Interactive Motion**](styles/45-apple-inspired-product-cinema.md) | `apple-inspired-product-cinema` | tutorial aplikasi, intro brand, edukasi sebab-akibat, demo interaktif | `#0D0E10` / `#8DB8FF` | `Inter` | **B25** / **B10** |
+| **46** | [**Bedah Lapis**](styles/46-bedah-lapis.md) | `bedah-lapis` | cara kerja benda sehari-hari, alat rumah dan mesin, "apa isi di dalam X", edukasi umum | `#F4F1EA` / `#2B59C3` | `Poppins` | **B25** / **B27** |
 
 ---
 
@@ -97,6 +98,7 @@ Angka mengacu ke nomor entri di katalog.
 - Nostalgia: VHS (15), Memphis (6), Y2K (16), Retro-Futurism (32), Pixel Art (17), Mid-Century (21)
 - Arsitektur, konstruksi, teknik: Blueprint (18), Isometric (7), Swiss (12)
 - Cara kerja benda, "kok bisa", cutaway, layanan publik (PDAM, listrik), edukasi pelanggan: Kita Bedah (44), Isometric (7), Blueprint (18), Data Editorial (36)
+- Cara kerja benda sehari-hari untuk penonton umum (alat rumah, mesin, kendaraan, gedung), "apa isi di dalam X", tampilan clay pastel: Bedah Lapis (46), Kita Bedah (44), Inflatable 3D (37)
 - Tutorial aplikasi, demo fitur, intro brand bersih dengan aksi kursor yang terlihat: Apple-Inspired Interactive Motion (45), Swiss (12), Motion Reel Editorial (43)
 - Promo jasa, portofolio, reel, pitch produk digital: Motion Reel Editorial (43), Swiss (12), Neo-Brutalism (11), Data Editorial (36)
 
@@ -419,6 +421,15 @@ Font semuanya dari Google Fonts berlisensi terbuka (muat lewat `@remotion/google
 **Gerak dan kamera:** kata kerja, UI, dan objek saling meneruskan perhatian. Aksi punya ancang-ancang dan titik kontak, respons mulai tepat di titik kontak, panel hasil berangkat dari bentuk dan posisi akhir shot aksi, lalu hasil ditahan agar terbaca.
 **Suara:** B25 (alt B10) dengan S-SINEMA dan S-MEKANIK; cue `click-soft`, `transition-swipe`, `pop-pluck` lewat `enableSfx` (lihat `references/style-sfx.json` kunci `"45"`).
 **Hindari:** meniru logo, produk, atau copy Apple; glow dan gradien; kursor yang bergerak tanpa tujuan; hasil yang langsung dipotong sebelum terbaca.
+
+### 46. Bedah Lapis
+**Cocok:** cara kerja benda sehari-hari untuk penonton umum (alat rumah, mesin, kendaraan, gedung), "kok bisa", "apa isi di dalam X". Tidak terikat Tirta Ayu: mode brand `umum` (default) atau `tirta-ayu` ditanyakan dulu. Shorts 9:16, 55 sampai 80 detik.
+**Visual:** krem #F4F1EA, tinta #1B2230, kata kunci biru #2B59C3, highlight kuning #FFC53D. Objek 3D clay pastel tanpa outline, bayangan lembut, cangkang putih gading, warna jenuh hanya untuk bagian yang dijelaskan (biru #4E9BE6, kuning #F4B63C, oranye #EE7B3A, mint #6FDBB3), tepi potong peach #F5C9A9. Overlay dari #44 yang diperbaiki: header 2 baris mulai y 200 dan hampir selebar layar (logo di tepi kanan), stepper berhuruf besar yang mengisi lebar header, counter, badge, caption karaoke di y 1540 sampai 1620 (selalu di bawah objek). Label bagian: pill putih kecil dengan titik warna bagian. Komponen: `templates/components/Lapis3D.tsx` dan `templates/components/LapisOverlay.tsx` (memakai ulang `Bedah3D.tsx` dan `BedahOverlay.tsx`).
+**Gerak dan kamera:** objek dibuka dengan melepas lapis luarnya satu per satu (`<Peel />`), lalu dipasang kembali di akhir. Kamera selalu melayang pelan (`driftHold`), boleh pindah langsung antarbagian yang terhubung, boleh bergerak bersama mekanisme. Chevron berbaris searah gerak nyata. Rekap: semua label tampil bersama di bidikan utuh.
+**Suara:** B25 (alt B27) dengan S-MEKANIK dan S-ORGANIK; cue lihat `references/style-sfx.json` kunci `"46"`.
+**Wajib ditanyakan dulu:** mode brand (`umum` / `tirta-ayu`) dan kalimat hook yang ditulis user (default "Yuk, kita bedah."). Lihat file gaya §0.
+**Pengecualian:** pill hanya lewat `<LapisCaption />`, `<StatusBadge />`, `<LapisLabel />`, `<LapisCard />`; titik warna hanya di dalam `<LapisLabel />` (file gaya §4.1).
+**Hindari:** outline, tone mapping filmik, bidang potong, warna jenuh di cangkang, objek atau label di bawah y 1500, kamera diam total atau shake, kalimat hook yang ditulis tetap di kode.
 
 ## Aturan Perpaduan dan Pengulangan
 

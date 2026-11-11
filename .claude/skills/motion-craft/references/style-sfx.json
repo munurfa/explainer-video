@@ -43,5 +43,6 @@
   "42": [["chalk-stroke", 0.23, "Krayon mulai menggores tekstur"], ["k3", 0.20, "Potongan kertas diangkat"], ["impact-soft", 0.18, "Benda lunak berhenti di atas kertas"]],
   "43": [["click-soft", 0.19, "Kontrol asli pada demo ditekan"], ["transition-chop", 0.23, "Match cut menghubungkan dua bentuk"], ["impact-soft", 0.22, "Produk mencapai posisi hero"]],
   "44": [["glass-contact", 0.20, "Lensa kaca pembesar menempel di bagian yang dibedah"], ["water-bloom", 0.22, "Air mulai mengalir lagi di pipa"], ["relay-switch", 0.18, "Label penjelas terkunci di posisinya"]],
-  "45": [["click-soft", 0.19, "Kursor menekan kontrol dan respons mulai terlihat"], ["transition-swipe", 0.18, "Objek yang diseret mencapai target"], ["pop-pluck", 0.19, "Panel hasil selesai membesar"]]
+  "45": [["click-soft", 0.19, "Kursor menekan kontrol dan respons mulai terlihat"], ["transition-swipe", 0.18, "Objek yang diseret mencapai target"], ["pop-pluck", 0.19, "Panel hasil selesai membesar"]],
+  "46": [["transition-swipe", 0.20, "Lapis luar objek mulai dilepas"], ["relay-switch", 0.20, "Mekanisme kecil berpindah posisi (klik)"], ["glass-contact", 0.18, "Label bagian menempel di objek"]]
 }

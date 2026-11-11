@@ -130,7 +130,7 @@ Tidak ada test suite. Verifikasi dilakukan dengan `npx tsc`, render still di fra
 - `src/theme/styles-catalog.ts`: sumber kebenaran untuk semua gaya (ID, slug, palet, font, preset motion, kode backsound/SFX). `render-all.mjs` mem-parse file ini dengan regex `[id,"slug"`, jadi format barisnya jangan diubah.
 - `src/Root.tsx`: membuat dua komposisi per gaya: `S<NN>-<slug>-169` (1920×1080) dan `S<NN>-<slug>-916` (1080×1920), 30 fps, `DURATION = 300` frame.
 - `src/StyleSample.tsx`: template 3 scene (transisi di frame 102 & 210). Entrance & SFX transisi dipilih dari preset gaya.
-- `src/motifs.tsx`: motif visual per gaya. `src/Bedah44.tsx`: scene khusus gaya #44 "Kita Bedah".
+- `src/motifs.tsx`: motif visual per gaya. `src/Bedah44.tsx`: scene khusus gaya #44 "Kita Bedah". `src/Bedah46.tsx`: scene khusus gaya #46 "Bedah Lapis" (clay pastel, lepas lapis; komponen `Lapis3D.tsx` + `LapisOverlay.tsx`).
 - `taglines.json`: tagline per ID gaya.
 
 ### `project/video-pemulihan-air`
