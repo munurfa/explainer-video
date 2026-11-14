@@ -126,24 +126,64 @@ const addHz = (base, d) => {
 
 export const norm = (s) => s.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}]/gu, '');
 
+/** Kemiripan 0..1 dari jarak Levenshtein (ejaan engine sering beda: "Jakuir" vs "Jakwir"). */
+export function similarity(a, b) {
+  if (a === b) return 1;
+  if (!a || !b) return 0;
+  let prev = Array.from({ length: b.length + 1 }, (_, k) => k);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let k = 1; k <= b.length; k++) {
+      cur[k] = Math.min(prev[k] + 1, cur[k - 1] + 1, prev[k - 1] + (a[i - 1] === b[k - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return 1 - prev[b.length] / Math.max(a.length, b.length);
+}
+
 /**
  * Petakan timestamp kata dari engine (tanpa tanda baca, kadang terpecah/tergabung)
  * kembali ke token naskah asli. Token tanpa pasangan diinterpolasi dari tetangganya.
  */
 export function mapBoundariesToTokens(tokens, bounds, totalMs) {
   const out = tokens.map((t) => ({ text: t, startMs: null, endMs: null }));
-  let bi = 0;
-  for (const o of out) {
-    const n = norm(o.text);
-    if (!n || bi >= bounds.length) continue;
-    let acc = norm(bounds[bi].text);
-    o.startMs = bounds[bi].startMs;
-    o.endMs = bounds[bi].endMs;
-    bi++;
-    while (acc.length < n.length && bi < bounds.length && n.startsWith(acc + norm(bounds[bi].text))) {
-      acc += norm(bounds[bi].text);
-      o.endMs = bounds[bi].endMs;
-      bi++;
+  // Alignment urutan (DP): token boleh dilewati (kata tidak tertangkap engine), kata engine boleh
+  // dilewati (sisipan), dan 1 token boleh menelan 1–3 kata engine ("pelan-pelan" -> "pelan" "-pelan").
+  // Greedy posisi lama bergeser permanen begitu satu kata hilang.
+  const T = tokens.map(norm);
+  const B = bounds.map((b) => norm(b.text));
+  const n = T.length, m = B.length, SKIP = 0.7, MAXJ = 3;
+  const cost = Array.from({ length: n + 1 }, () => new Float64Array(m + 1).fill(Infinity));
+  const from = Array.from({ length: n + 1 }, () => new Int8Array(m + 1));
+  cost[0][0] = 0;
+  for (let i = 0; i <= n; i++) {
+    for (let j = 0; j <= m; j++) {
+      const c = cost[i][j];
+      if (c === Infinity) continue;
+      const relax = (ii, jj, v, op) => { if (v < cost[ii][jj]) { cost[ii][jj] = v; from[ii][jj] = op; } };
+      if (i < n) relax(i + 1, j, c + (T[i] ? SKIP : 0), -1); // token tanpa pasangan
+      if (j < m) relax(i, j + 1, c + SKIP, -2); // kata engine tanpa pasangan
+      if (i < n && T[i]) {
+        let acc = '';
+        for (let k = 1; k <= MAXJ && j + k <= m; k++) {
+          acc += B[j + k - 1];
+          relax(i + 1, j + k, c + (1 - similarity(T[i], acc)) + (k - 1) * 0.05, k);
+        }
+      }
+    }
+  }
+  for (let i = n, j = m; i > 0 || j > 0; ) {
+    const op = from[i][j];
+    if (op === -1) i--;
+    else if (op === -2) j--;
+    else {
+      // pasangan terlalu beda dianggap tidak cocok -> diinterpolasi
+      if (similarity(T[i - 1], B.slice(j - op, j).join('')) >= 0.5) {
+        out[i - 1].startMs = bounds[j - op].startMs;
+        out[i - 1].endMs = bounds[j - 1].endMs;
+      }
+      i--;
+      j -= op;
     }
   }
   // interpolasi token yang tidak kebagian timestamp
@@ -151,8 +191,13 @@ export function mapBoundariesToTokens(tokens, bounds, totalMs) {
     if (out[i].startMs !== null) continue;
     let j = i;
     while (j < out.length && out[j].startMs === null) j++;
-    const from = i > 0 ? out[i - 1].endMs : 0;
+    let from = i > 0 ? out[i - 1].endMs : 0;
     const to = j < out.length ? out[j].startMs : Math.max(from + 200 * (j - i), totalMs || 0);
+    // Celah terlalu sempit (kata terucap tapi tidak tertangkap engine): bagi rata dengan kata sebelumnya.
+    if (i > 0 && (to - from) / (j - i) < 120) {
+      i--;
+      from = out[i].startMs;
+    }
     const step = (to - from) / (j - i);
     for (let k = i; k < j; k++) {
       out[k].startMs = Math.round(from + step * (k - i));
@@ -348,8 +393,13 @@ export async function synthSegment(profile, seg, base, opts = {}) {
   return synthEdge(profile, seg, base);
 }
 
-function toWav(src, dst) {
-  run('ffmpeg', ['-y', '-v', 'error', '-i', src, '-ar', '48000', '-ac', '1', '-c:a', 'pcm_s16le', dst]);
+function toWav(src, dst, tempo = 1, trim = false) {
+  // trim: buang hening awal/akhir segmen (Gemini menambah ±0,5 dtk hening di ujung take).
+  // Hanya untuk audio tanpa timestamp engine, karena memotong awal menggeser timestamp itu.
+  const cut = 'silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.04';
+  const filters = [...(trim ? [cut, 'areverse', cut, 'areverse'] : []), ...(tempo !== 1 ? [`atempo=${tempo}`] : [])];
+  const af = filters.length ? ['-af', filters.join(',')] : [];
+  run('ffmpeg', ['-y', '-v', 'error', '-i', src, ...af, '-ar', '48000', '-ac', '1', '-c:a', 'pcm_s16le', dst]);
 }
 function silenceWav(ms, dst) {
   run('ffmpeg', ['-y', '-v', 'error', '-f', 'lavfi', '-i', 'anullsrc=r=48000:cl=mono', '-t', String(ms / 1000), '-c:a', 'pcm_s16le', dst]);
@@ -375,13 +425,17 @@ export async function synthScript(script, profile, opts) {
   }
   for (const [si, sc] of script.scenes.entries()) {
     const spanStart = cursor;
+    let speechEnd = cursor;
     for (const seg of sc.segments) {
       const base = path.join(tmp, `seg-${String(n++).padStart(3, '0')}`);
       const r = await synthSegment(profile, seg, base, opts);
       source = source || r.source;
       const wav = `${base}.wav`;
-      toWav(r.audio, wav);
+      const tempo = opts.tempo || 1;
+      toWav(r.audio, wav, tempo, !r.bounds);
       const dur = probeDurationMs(wav);
+      // Timestamp engine (Edge/ElevenLabs) ikut dipadatkan oleh atempo.
+      if (r.bounds && tempo !== 1) r.bounds = r.bounds.map((b) => ({ ...b, startMs: b.startMs / tempo, endMs: b.endMs / tempo }));
       // Tanpa timestamp dari engine (Gemini): estimasi di dalam segmen, batas segmen tetap asli.
       const mapped = r.bounds
         ? mapBoundariesToTokens(seg.text.split(/\s+/), r.bounds, dur)
@@ -389,14 +443,17 @@ export async function synthScript(script, profile, opts) {
       for (const w of mapped) words.push({ text: w.text, startMs: cursor + w.startMs, endMs: cursor + w.endMs, scene: sc.id });
       parts.push(wav);
       cursor += dur;
+      speechEnd = cursor;
       if (seg.pauseAfterMs) {
         const f = `${base}-pause.wav`;
-        silenceWav(seg.pauseAfterMs, f);
+        const pause = Math.round(seg.pauseAfterMs / (opts.tempo || 1));
+        silenceWav(pause, f);
         parts.push(f);
-        cursor += seg.pauseAfterMs;
+        cursor += pause;
       }
     }
-    sceneSpans.push({ id: sc.id, voStartMs: spanStart, voEndMs: cursor });
+    // voEndMs = akhir ucapan terakhir; jeda penutup scene tidak dihitung sebagai bicara.
+    sceneSpans.push({ id: sc.id, voStartMs: spanStart, voEndMs: speechEnd, endMs: cursor });
     const gap = si < script.scenes.length - 1 ? opts.sceneGapMs ?? 250 : opts.tailMs ?? 300;
     if (gap > 0) {
       const f = path.join(tmp, `gap-${si}.wav`);
@@ -419,12 +476,22 @@ export async function synthScript(script, profile, opts) {
     const aligned = opts.align === 'none' ? null : alignAny(outAudio, words.map((w) => w.text).join(' '), lang, opts.align);
     if (aligned) {
       const mapped = mapBoundariesToTokens(words.map((w) => w.text), aligned.bounds, totalMs);
-      // Terima hasil align hanya bila urutannya maju dan kata tetap di dalam scene-nya.
+      // Batas scene pasti (dari sambungan segmen). Whisper sering menaruh awal kata pertama scene di jeda
+      // hening sebelumnya, jadi kata yang meleset sedikit dijepit ke span scene-nya. Hasil ditolak hanya
+      // bila ada kata yang meleset jauh (> 1,5 dtk) atau urutannya mundur.
       const ok = mapped.every((w, i) => {
         const sp = sceneSpans.find((s) => s.id === words[i].scene);
-        const inScene = !sp || (w.startMs >= sp.voStartMs - 400 && w.startMs <= sp.voEndMs + 400);
+        const inScene = !sp || (w.startMs >= sp.voStartMs - 1500 && w.startMs <= sp.voEndMs + 1500);
         return inScene && (i === 0 || w.startMs >= mapped[i - 1].startMs - 50);
       });
+      if (ok) {
+        mapped.forEach((w, i) => {
+          const sp = sceneSpans.find((s) => s.id === words[i].scene);
+          if (!sp) return;
+          w.startMs = Math.min(Math.max(w.startMs, sp.voStartMs), sp.voEndMs - 40);
+          w.endMs = Math.min(Math.max(w.endMs, w.startMs + 40), sp.voEndMs);
+        });
+      }
       if (ok) {
         mapped.forEach((w, i) => Object.assign(words[i], { startMs: w.startMs, endMs: w.endMs }));
         source = `gemini+${aligned.engine}`;

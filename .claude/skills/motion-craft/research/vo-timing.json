@@ -1,0 +1,29 @@
+{
+  "source": "estimate-wpm",
+  "provider": null,
+  "profile": "N01",
+  "audio": null,
+  "lang": "id",
+  "fps": 30,
+  "wpsBudget": 2.5,
+  "totalMs": 5775,
+  "totalFrames": 173,
+  "scenes": [
+    {
+      "id": "S1",
+      "tags": [],
+      "plannedSec": [
+        0,
+        4.8
+      ],
+      "startMs": 0,
+      "endMs": 5775,
+      "voStartMs": 120,
+      "voEndMs": 4575,
+      "startFrame": 0,
+      "durationInFrames": 173,
+      "words": 12,
+      "wordsPerSec": 2.69
+    }
+  ]
+}

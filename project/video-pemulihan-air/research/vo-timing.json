@@ -1,0 +1,182 @@
+{
+  "source": "gemini+faster-whisper",
+  "provider": "gemini",
+  "profile": "G-Laomedeia",
+  "gemini": {
+    "voice": "Laomedeia",
+    "style": "young cheerful Indonesian woman in her early twenties, warm and friendly like a helpful neighbour, relaxed conversational pace, smiling voice, clear articulation",
+    "model": "gemini-3.8-flash-tts"
+  },
+  "audio": "public/audio/narration.mp3",
+  "lang": "id",
+  "fps": 30,
+  "wpsBudget": 2.5,
+  "totalMs": 65026,
+  "totalFrames": 1951,
+  "scenes": [
+    {
+      "id": "S1",
+      "tags": [
+        "hook"
+      ],
+      "plannedSec": [
+        0,
+        3
+      ],
+      "startMs": 0,
+      "endMs": 3441,
+      "voStartMs": 100,
+      "voEndMs": 2984,
+      "startFrame": 0,
+      "durationInFrames": 103,
+      "words": 7,
+      "wordsPerSec": 2.43
+    },
+    {
+      "id": "S2",
+      "tags": [],
+      "plannedSec": [
+        3,
+        5
+      ],
+      "startMs": 3441,
+      "endMs": 5950,
+      "voStartMs": 3591,
+      "voEndMs": 5314,
+      "startFrame": 103,
+      "durationInFrames": 76,
+      "words": 4,
+      "wordsPerSec": 2.32
+    },
+    {
+      "id": "S3",
+      "tags": [],
+      "plannedSec": [
+        5,
+        15
+      ],
+      "startMs": 5950,
+      "endMs": 14940,
+      "voStartMs": 6100,
+      "voEndMs": 14840,
+      "startFrame": 179,
+      "durationInFrames": 269,
+      "words": 22,
+      "wordsPerSec": 2.52
+    },
+    {
+      "id": "S4",
+      "tags": [],
+      "plannedSec": [
+        15,
+        21
+      ],
+      "startMs": 14940,
+      "endMs": 21388,
+      "voStartMs": 15090,
+      "voEndMs": 21288,
+      "startFrame": 448,
+      "durationInFrames": 194,
+      "words": 11,
+      "wordsPerSec": 1.77
+    },
+    {
+      "id": "S5",
+      "tags": [],
+      "plannedSec": [
+        21,
+        30
+      ],
+      "startMs": 21388,
+      "endMs": 29858,
+      "voStartMs": 21538,
+      "voEndMs": 29758,
+      "startFrame": 642,
+      "durationInFrames": 254,
+      "words": 21,
+      "wordsPerSec": 2.55
+    },
+    {
+      "id": "S6",
+      "tags": [],
+      "plannedSec": [
+        30,
+        40
+      ],
+      "startMs": 29858,
+      "endMs": 38642,
+      "voStartMs": 30008,
+      "voEndMs": 38542,
+      "startFrame": 896,
+      "durationInFrames": 263,
+      "words": 24,
+      "wordsPerSec": 2.81
+    },
+    {
+      "id": "S7",
+      "tags": [],
+      "plannedSec": [
+        40,
+        46
+      ],
+      "startMs": 38642,
+      "endMs": 44874,
+      "voStartMs": 38792,
+      "voEndMs": 44774,
+      "startFrame": 1159,
+      "durationInFrames": 187,
+      "words": 13,
+      "wordsPerSec": 2.17
+    },
+    {
+      "id": "S8",
+      "tags": [],
+      "plannedSec": [
+        46,
+        54
+      ],
+      "startMs": 44874,
+      "endMs": 53213,
+      "voStartMs": 45024,
+      "voEndMs": 53113,
+      "startFrame": 1346,
+      "durationInFrames": 250,
+      "words": 16,
+      "wordsPerSec": 1.98
+    },
+    {
+      "id": "S9",
+      "tags": [],
+      "plannedSec": [
+        54,
+        62
+      ],
+      "startMs": 53213,
+      "endMs": 60768,
+      "voStartMs": 53363,
+      "voEndMs": 60668,
+      "startFrame": 1596,
+      "durationInFrames": 227,
+      "words": 18,
+      "wordsPerSec": 2.46
+    },
+    {
+      "id": "S10",
+      "tags": [
+        "cta"
+      ],
+      "plannedSec": [
+        62,
+        66
+      ],
+      "startMs": 60768,
+      "endMs": 65026,
+      "voStartMs": 60918,
+      "voEndMs": 63826,
+      "startFrame": 1823,
+      "durationInFrames": 128,
+      "words": 6,
+      "wordsPerSec": 2.06
+    }
+  ]
+}

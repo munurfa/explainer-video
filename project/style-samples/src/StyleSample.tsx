@@ -5,6 +5,8 @@ import { quantizeFrame, splineAt } from './theme/easing-and-timing';
 import { ProceduralBackground } from './components/ProceduralBackground';
 import { KaraokePillCaption, WordItem } from './components/BedahOverlay';
 import { BEDAH44_CAPTION, BEDAH44_SFX, Bedah44Scene } from './Bedah44';
+import { BEDAH46_CAPTION, BEDAH46_SFX, Bedah46Scene } from './Bedah46';
+import { LapisCaption } from './components/LapisOverlay';
 import { loadFamily, nearestWeight } from './fonts';
 import { Ctx, EIO, EO, ip, onColor, scramble, sp } from './helpers';
 import { MOTIFS } from './motifs';
@@ -397,6 +399,12 @@ const bedah44Words = (): WordItem[] =>
     s.split(' ').map((w, i) => ({ text: w, startMs: Math.round(((at + i * 10) / 30) * 1000), endMs: Math.round(((at + (i + 1) * 10) / 30) * 1000) }))
   );
 
+/** Caption #46: [frame mulai, kalimat, frame per kata]. */
+const bedah46Words = (): WordItem[] =>
+  BEDAH46_CAPTION.flatMap(([at, s, per = 10]) =>
+    s.split(' ').map((w, i) => ({ text: w, startMs: Math.round(((at + i * per) / 30) * 1000), endMs: Math.round(((at + (i + 1) * per) / 30) * 1000) }))
+  );
+
 /* =============================== MAIN ============================== */
 export const StyleSample: React.FC<{ styleId: number }> = ({ styleId }) => {
   const st = getStyleById(styleId);
@@ -462,6 +470,22 @@ export const StyleSample: React.FC<{ styleId: number }> = ({ styleId }) => {
         <KaraokePillCaption words={bedah44Words()} stylePreset={st} fontSize={isV ? 46 : 36} maxWordsPerLine={isV ? 4 : 6} />
         <Audio src={staticFile(`music/${st.audio.backsound}.wav`)} volume={(fr) => 0.42 * ip(fr, [0, 10, 280, 300], [0, 1, 1, 0], (x) => x)} />
         {BEDAH44_SFX.map(([at, name, vol, len], i) => (
+          <Sequence key={i} from={at} durationInFrames={len}>
+            <Audio src={staticFile(`audio/sfx/${name}.wav`)} volume={vol} />
+          </Sequence>
+        ))}
+      </AbsoluteFill>
+    );
+  }
+
+  // #46: sama seperti #44, satu ruang 3D berkelanjutan; objek dibuka dengan melepas lapis
+  if (st.id === 46) {
+    return (
+      <AbsoluteFill style={{ background: p.bg, overflow: 'hidden' }}>
+        <Bedah46Scene c={c} t={f} />
+        <LapisCaption words={bedah46Words()} stylePreset={st} />
+        <Audio src={staticFile(`music/${st.audio.backsound}.wav`)} volume={(fr) => 0.42 * ip(fr, [0, 10, 280, 300], [0, 1, 1, 0], (x) => x)} />
+        {BEDAH46_SFX.map(([at, name, vol, len], i) => (
           <Sequence key={i} from={at} durationInFrames={len}>
             <Audio src={staticFile(`audio/sfx/${name}.wav`)} volume={vol} />
           </Sequence>

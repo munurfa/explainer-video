@@ -13,6 +13,7 @@
  *   node narrator-sync.mjs --script research/vo-script.md --profile gemini:Achird --gemini-style "..." --tts
  *     --gemini-model <id>   (default GEMINI_TTS_MODEL atau gemini-3.8-flash-tts)
  *     --gemini-fresh        abaikan cache take lama, generate ulang
+ *     --tempo <0.8-1.3>     percepat/perlambat narasi (ffmpeg atempo, nada tetap). Tanpa request TTS baru
  *     --align auto|faster-whisper|whisperx|none
  *   # Audio rekaman sudah ada -> forced alignment WhisperX (bila terpasang), atau estimasi diskalakan ke durasi audio
  *   node narrator-sync.mjs --script research/vo-script.md --audio public/audio/vo.wav
@@ -30,7 +31,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   VOICE_PROFILES,
-  alignWithWhisperX,
+  alignAny,
   estimateWords,
   geminiKey,
   hasPython,
@@ -64,6 +65,7 @@ function parseArgs(argv) {
     geminiStyle: null,
     geminiModel: null,
     geminiFresh: false,
+    tempo: 1,
     align: 'auto',
     outWords: 'public/words.json',
     outMap: 'research/word-map.md',
@@ -80,6 +82,7 @@ function parseArgs(argv) {
     if (k === '--gemini-style' && v) a.geminiStyle = v;
     if (k === '--gemini-model' && v) a.geminiModel = v;
     if (k === '--gemini-fresh') a.geminiFresh = true;
+    if (k === '--tempo' && v) a.tempo = Math.min(1.3, Math.max(0.8, Number(v) || 1));
     if (k === '--align' && v) a.align = v;
     if (k === '--tts') a.tts = true;
     if (k === '--audio' && v) a.audio = v;
@@ -195,20 +198,21 @@ if (opts.tts) {
   audioFile = opts.audio;
   const durMs = probeDurationMs(opts.audio);
   const allText = script.scenes.map((s) => s.text).join(' ');
-  if (hasPython('whisperx')) {
+  // Audio rekaman (mis. ElevenLabs buatan user): WhisperX bila ada, selain itu faster-whisper. `--align` memaksa salah satu.
+  const aligned = opts.align === 'none' ? null : alignAny(opts.audio, allText, lang, opts.align);
+  if (aligned) {
     try {
-      const bounds = alignWithWhisperX(opts.audio, allText, lang);
       const tokens = [];
       for (const sc of script.scenes) for (const t of sc.text.split(' ')) tokens.push({ t, scene: sc.id });
-      const mapped = mapBoundariesToTokens(tokens.map((x) => x.t), bounds, durMs);
+      const mapped = mapBoundariesToTokens(tokens.map((x) => x.t), aligned.bounds, durMs);
       const words = mapped.map((w, i) => ({ ...w, scene: tokens[i].scene }));
       result = { words, sceneSpans: spansFromWords(words), totalMs: durMs };
-      source = 'whisperx';
+      source = aligned.engine;
     } catch (err) {
-      notes.push(`WhisperX gagal (${err.message.split('\n')[0]}); memakai estimasi diskalakan ke durasi audio.`);
+      notes.push(`Pemetaan hasil ${aligned.engine} gagal (${err.message.split('\n')[0]}); memakai estimasi diskalakan ke durasi audio.`);
     }
   } else {
-    notes.push('WhisperX tidak terpasang (pip install whisperx); memakai estimasi diskalakan ke durasi audio.');
+    notes.push('Aligner tidak tersedia atau gagal (pip install faster-whisper atau whisperx; set MOTION_PY bila perlu); memakai estimasi diskalakan ke durasi audio.');
   }
   if (!result) {
     result = estimateScript(durMs);

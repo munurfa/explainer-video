@@ -2,10 +2,9 @@
 
 # Khusus Claude Code
 
-- **WAJIB: setiap project video baru dibuat di `project/video-<topik>/`.** Tidak boleh di root, `sample/`, `.claude/`, atau di dalam project lain. Konfirmasi nama folder ke user sebelum membuat file. Semua path di perintah skill motion-craft (`research/`, `public/`, `src/`, `out/`) relatif terhadap folder project itu, jadi `cd` ke sana dulu.
+Semua aturan (lokasi project, approval gate, penonton awam, daftar skill) ada di `AGENTS.md` di atas. Tambahan khusus Claude Code:
 
-- Untuk video atau motion graphics baru, pakai skill `/motion-craft` dan ikuti approval gate-nya (klarifikasi → storyboard → naskah VO → sampel suara → render). Jangan langsung lompat ke render.
-- Untuk pekerjaan Tirta Ayu / Tiray, muat skill `tiray-brand-kit` sebelum menyentuh logo, warna, copy, atau outro.
-- Untuk API Remotion (captions, render, studio, three, maps), muat skill `remotion-best-practices` atau skill `remotion-*` yang relevan, jangan menebak dari ingatan.
-- Preview pakai Remotion Studio (`npm run studio`) lewat browser pane. Cek hasil dengan render still di frame kunci dari storyboard sebelum render penuh.
-- Render penuh memakan waktu lama, jadi jalankan di background.
+- Skill di `.claude/skills/` termuat otomatis. Panggil lewat Skill tool (`motion-craft`, `tiray-brand-kit`, `remotion-*`), tidak perlu membaca `SKILL.md` manual.
+- Approval gate: akhiri giliran dan tunggu jawaban user. Pertanyaan pilihan boleh lewat AskUserQuestion.
+- Preview Remotion Studio dibuka lewat browser pane (`preview_start`).
+- Render penuh dijalankan dengan `run_in_background`.

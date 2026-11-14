@@ -8,7 +8,7 @@
  * 3. NO_CAMERA_SHAKE: Dilarang efek camera shake terus-menerus
  * 4. NO_DECORATIVE_FILLER_ICONS: Dilarang ikon hiasan tidak berguna (SparkleIcon, LightningIcon, LightbulbIcon, spark-four, lightning-bolt)
  * 5. NO_BULLET_DOT_LABEL: Dilarang membuat titik/icon bulat di samping teks seperti "• teks_kalimat" atau status dot bulat generik
- * 6. BEDAH_TEXT_BUDGET: gaya #44, teks on-screen maks 7 kata & tayang >= 0,3 dtk per kata
+ * 6. BEDAH_TEXT_BUDGET: gaya #44 dan #46, teks on-screen maks 7 kata & tayang >= 0,3 dtk per kata
  */
 
 import fs from 'node:fs';
@@ -100,8 +100,8 @@ for (const file of files) {
 }
 
 /**
- * 6. BEDAH_TEXT_BUDGET (gaya #44): teks on-screen maks 7 kata & tayang >= 0,3 dtk per kata.
- * Hanya file yang memakai BedahOverlay. Memeriksa prop string literal (text/keyword/before/after/label/subLabel/title)
+ * 6. BEDAH_TEXT_BUDGET (gaya #44 dan #46): teks on-screen maks 7 kata & tayang >= 0,3 dtk per kata.
+ * Hanya file yang memakai BedahOverlay atau LapisOverlay. Memeriksa prop string literal (text/keyword/before/after/label/subLabel/title)
  * dan, bila tag yang sama punya start={N} end={M} literal, lama tayang M - N (CalloutPill: dikurangi 12 frame animasi masuk).
  */
 const BEDAH_FPS = Number(process.env.LINT_FPS || 30);
@@ -110,9 +110,9 @@ const countWords = (s) => s.trim().split(/\s+/).filter((w) => /[A-Za-zÀ-ɏ]/.te
 const lineOf = (content, i) => content.slice(0, i).split(/\n/).length;
 
 for (const file of files) {
-  if (!/\.(t|j)sx$/.test(file) || /BedahOverlay\.tsx$/.test(file)) continue;
+  if (!/\.(t|j)sx$/.test(file) || /(Bedah|Lapis)Overlay\.tsx$/.test(file)) continue;
   const content = fs.readFileSync(file, 'utf8');
-  if (!/from\s+['"][^'"]*BedahOverlay['"]/.test(content)) continue;
+  if (!/from\s+['"][^'"]*(Bedah|Lapis)Overlay['"]/.test(content)) continue;
   for (const m of content.matchAll(BEDAH_PROP)) {
     const text = m[2];
     const n = countWords(text);

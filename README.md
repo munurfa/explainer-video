@@ -101,7 +101,7 @@ Narasi suara pria, nada hangat, ada angka/infografis (tandai ILUSTRASI kalau buk
 
 ## Skill Agent
 
-Folder `.claude/skills/` berisi skill untuk Claude Code:
+Folder `.claude/skills/` berisi skill agent. OpenCode dan Claude Code sama-sama memuatnya otomatis (di OpenCode lewat tool `skill` atau `@motion-craft`). Aturan agent ada di `AGENTS.md`, yang dibaca langsung oleh OpenCode; `CLAUDE.md` hanya meng-import `AGENTS.md` untuk Claude Code.
 
 - **motion-craft** — alur kerja motion graphics bertahap: storyboard, naskah VO, sampel suara, render 9:16, SRT & caption, plus pustaka SFX/lagu dan panduan gaya.
 - **remotion-\*** — referensi & praktik terbaik Remotion (captions, render, studio, maps, dll.).

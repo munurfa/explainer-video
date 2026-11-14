@@ -29,7 +29,7 @@ const styles = [...catalogSrc.matchAll(/^\s*\[(\d+),"([a-z0-9-]+)"/gm)].map((m) 
 const list = styles.filter((s) => !only || only.includes(s.id));
 
 const outDir = path.join(root, 'out');
-const sampleDir = path.resolve(root, '..', 'sample');
+const sampleDir = path.resolve(root, '..', '..', 'sample'); // sample/ ada di root repo
 fs.mkdirSync(outDir, { recursive: true });
 
 for (const s of list) {

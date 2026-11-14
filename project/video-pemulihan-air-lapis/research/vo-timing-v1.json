@@ -1,0 +1,193 @@
+{
+  "source": "faster-whisper",
+  "provider": null,
+  "profile": "N01",
+  "audio": "public/audio/narration.mp3",
+  "lang": "id",
+  "fps": 30,
+  "wpsBudget": 2.5,
+  "totalMs": 68860,
+  "totalFrames": 2066,
+  "scenes": [
+    {
+      "id": "S1",
+      "tags": [
+        "hook"
+      ],
+      "plannedSec": [
+        0,
+        3
+      ],
+      "startMs": 0,
+      "endMs": 3250,
+      "voStartMs": 0,
+      "voEndMs": 3040,
+      "startFrame": 0,
+      "durationInFrames": 98,
+      "words": 7,
+      "wordsPerSec": 2.3
+    },
+    {
+      "id": "S2",
+      "tags": [],
+      "plannedSec": [
+        3,
+        6
+      ],
+      "startMs": 3250,
+      "endMs": 5490,
+      "voStartMs": 3400,
+      "voEndMs": 5080,
+      "startFrame": 98,
+      "durationInFrames": 67,
+      "words": 3,
+      "wordsPerSec": 1.79
+    },
+    {
+      "id": "S3",
+      "tags": [],
+      "plannedSec": [
+        6,
+        11
+      ],
+      "startMs": 5490,
+      "endMs": 10210,
+      "voStartMs": 5640,
+      "voEndMs": 9860,
+      "startFrame": 165,
+      "durationInFrames": 141,
+      "words": 11,
+      "wordsPerSec": 2.61
+    },
+    {
+      "id": "S4",
+      "tags": [],
+      "plannedSec": [
+        11,
+        21
+      ],
+      "startMs": 10210,
+      "endMs": 19610,
+      "voStartMs": 10360,
+      "voEndMs": 19340,
+      "startFrame": 306,
+      "durationInFrames": 282,
+      "words": 22,
+      "wordsPerSec": 2.45
+    },
+    {
+      "id": "S5",
+      "tags": [],
+      "plannedSec": [
+        21,
+        27
+      ],
+      "startMs": 19610,
+      "endMs": 25290,
+      "voStartMs": 19760,
+      "voEndMs": 25140,
+      "startFrame": 588,
+      "durationInFrames": 171,
+      "words": 10,
+      "wordsPerSec": 1.86
+    },
+    {
+      "id": "S6",
+      "tags": [],
+      "plannedSec": [
+        27,
+        37
+      ],
+      "startMs": 25290,
+      "endMs": 34290,
+      "voStartMs": 25440,
+      "voEndMs": 34000,
+      "startFrame": 759,
+      "durationInFrames": 270,
+      "words": 21,
+      "wordsPerSec": 2.45
+    },
+    {
+      "id": "S7",
+      "tags": [],
+      "plannedSec": [
+        37,
+        48
+      ],
+      "startMs": 34290,
+      "endMs": 43690,
+      "voStartMs": 34440,
+      "voEndMs": 43440,
+      "startFrame": 1029,
+      "durationInFrames": 282,
+      "words": 23,
+      "wordsPerSec": 2.56
+    },
+    {
+      "id": "S8",
+      "tags": [],
+      "plannedSec": [
+        48,
+        55
+      ],
+      "startMs": 43690,
+      "endMs": 49790,
+      "voStartMs": 43840,
+      "voEndMs": 49560,
+      "startFrame": 1311,
+      "durationInFrames": 183,
+      "words": 13,
+      "wordsPerSec": 2.27
+    },
+    {
+      "id": "S9",
+      "tags": [],
+      "plannedSec": [
+        55,
+        62
+      ],
+      "startMs": 49790,
+      "endMs": 56510,
+      "voStartMs": 49940,
+      "voEndMs": 56660,
+      "startFrame": 1494,
+      "durationInFrames": 201,
+      "words": 13,
+      "wordsPerSec": 1.93
+    },
+    {
+      "id": "S10",
+      "tags": [],
+      "plannedSec": [
+        62,
+        71
+      ],
+      "startMs": 56510,
+      "endMs": 64310,
+      "voStartMs": 56660,
+      "voEndMs": 64260,
+      "startFrame": 1695,
+      "durationInFrames": 234,
+      "words": 18,
+      "wordsPerSec": 2.37
+    },
+    {
+      "id": "S11",
+      "tags": [
+        "cta"
+      ],
+      "plannedSec": [
+        71,
+        75
+      ],
+      "startMs": 64310,
+      "endMs": 68860,
+      "voStartMs": 64460,
+      "voEndMs": 67660,
+      "startFrame": 1929,
+      "durationInFrames": 137,
+      "words": 6,
+      "wordsPerSec": 1.88
+    }
+  ]
+}

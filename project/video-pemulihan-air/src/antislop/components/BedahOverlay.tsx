@@ -172,7 +172,8 @@ export interface BedahHeaderProps {
   keyword: string;
   /** Teks sesudah kata kunci */
   after?: string;
-  subLabel?: string;
+  /** String atau <BedahStepper /> (penanda posisi alur) */
+  subLabel?: React.ReactNode;
   start: number;
   /** Slot kanan atas (biasanya <StatusBadge />) */
   right?: React.ReactNode;
@@ -306,6 +307,7 @@ export const CalloutPill: React.FC<CalloutPillProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   if (frame < start || (end !== undefined && frame > end + 8)) return null;
+  warnText(text, end !== undefined ? end - (start + 12) : undefined, fps);
 
   const dot = ip(frame, [start, start + 6], [0, 1], easeOutExpo);
   const line = ip(frame, [start + 4, start + 14], [0, 1], easeInOutSmooth);
@@ -370,7 +372,7 @@ export interface KaraokePillCaptionProps {
   stylePreset: MotionStylePreset;
   sceneStartOffsetMs?: number;
   fontSize?: number;
-  /** Jarak dari bawah layar. Default 200 = di atas UI Shorts/Reels */
+  /** Jarak dari bawah layar. Default mengikuti safe zone: 9:16 = 22% tinggi (baris bawah y ~1498, di atas UI Reels/TikTok/Shorts), 16:9 = 6% */
   bottomOffset?: number;
   maxWordsPerLine?: number;
 }
@@ -380,11 +382,12 @@ export const KaraokePillCaption: React.FC<KaraokePillCaptionProps> = ({
   stylePreset,
   sceneStartOffsetMs = 0,
   fontSize = 50,
-  bottomOffset = 200,
+  bottomOffset: bottomOffsetProp,
   maxWordsPerLine = 4,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
+  const bottomOffset = bottomOffsetProp ?? Math.round(height * (height > width ? 0.22 : 0.06));
   const nowMs = (frame / fps) * 1000 + sceneStartOffsetMs;
   if (!words || words.length === 0) return null;
 
@@ -637,5 +640,170 @@ export const BedahRecapList: React.FC<BedahRecapListProps> = ({
         );
       })}
     </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* 8. ATURAN TEKS: maks 7 kata, tayang min 0,3 dtk per kata            */
+/* ------------------------------------------------------------------ */
+export const BEDAH_TEXT_RULES = { maxWords: 7, minSecPerWord: 0.3 } as const;
+
+/** Hitung kata yang dibaca penonton (angka urut "01" dan tanda baca tidak dihitung). */
+export const countWords = (s: string) =>
+  s
+    .trim()
+    .split(/\s+/)
+    .filter((w) => /[A-Za-zÀ-ɏ]/.test(w)).length;
+
+/** Lama tayang minimal (frame) sebuah teks: jumlah kata x 0,3 dtk. Pakai untuk menghitung `end`. */
+export const holdFrames = (text: string, fps = 30) => Math.ceil(countWords(text) * BEDAH_TEXT_RULES.minSecPerWord * fps);
+
+/** Daftar pelanggaran aturan teks. `shownFrames` = frame teks terbaca penuh (setelah animasi masuk). */
+export function checkText(text: string, shownFrames?: number, fps = 30): string[] {
+  const n = countWords(text);
+  const out: string[] = [];
+  if (n > BEDAH_TEXT_RULES.maxWords) out.push(`"${text}" ${n} kata > ${BEDAH_TEXT_RULES.maxWords}`);
+  if (shownFrames !== undefined && shownFrames < holdFrames(text, fps)) {
+    out.push(`"${text}" tampil ${(shownFrames / fps).toFixed(2)} dtk < ${(holdFrames(text, fps) / fps).toFixed(2)} dtk (${n} kata x 0,3)`);
+  }
+  return out;
+}
+
+const warned = new Set<string>();
+/** Peringatan sekali per teks di log render (tidak menggagalkan render). */
+export function warnText(text: string, shownFrames?: number, fps = 30) {
+  for (const msg of checkText(text, shownFrames, fps)) {
+    if (warned.has(msg)) continue;
+    warned.add(msg);
+    console.warn(`[BedahText] ${msg}`);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 9. JADWAL SATU-GERAK (one mover at a time)                          */
+/* ------------------------------------------------------------------ */
+export interface Beat {
+  id: string;
+  /** Durasi beat (frame). Selama beat ini HANYA elemen ini yang bergerak. */
+  dur: number;
+}
+export type BeatMap<K extends string = string> = Record<K, [number, number]>;
+
+/**
+ * Susun beat berurutan tanpa tumpang tindih: beat berikutnya baru mulai saat beat sebelumnya selesai.
+ * Kamera juga satu beat (zoom / pull-back), jadi kamera diam selama objek atau teks bergerak.
+ *   const B = sequenceBeats([{ id: 'header', dur: 18 }, { id: 'zoom1', dur: 28 }, ...]);
+ *   ip(t, B.zoom1, [0, 1], EIO)
+ */
+export function sequenceBeats<K extends string>(beats: { id: K; dur: number }[], startAt = 0): BeatMap<K> {
+  const out = {} as BeatMap<K>;
+  let f = startAt;
+  for (const b of beats) {
+    out[b.id] = [f, f + b.dur];
+    f += b.dur;
+  }
+  return out;
+}
+
+/* ------------------------------------------------------------------ */
+/* 10. PANAH ALUR (arah = arah gerak nyata)                            */
+/* ------------------------------------------------------------------ */
+export interface FlowArrowProps {
+  stylePreset: MotionStylePreset;
+  /** Titik jalur di layar, urut SEARAH gerak nyata (ekor -> kepala). Dari projectToScreen() titik 3D. */
+  points: [number, number][];
+  /** Progres 0..1. Pakai nilai yang sama dengan progres gerak benda (bukaan katup, muka air) agar kepala panah ikut benda. */
+  progress: number;
+  color?: string;
+  width?: number;
+  head?: number;
+  opacity?: number;
+}
+
+/**
+ * Panah yang tumbuh dari ekor ke kepala mengikuti arah gerak sebenarnya: rotasi roda (busur searah putaran),
+ * stem/pintu naik (garis ke atas), air ke hilir (garis sepanjang pipa). Tanpa pill, tanpa label.
+ */
+export const FlowArrow: React.FC<FlowArrowProps> = ({ stylePreset, points, progress, color, width = 6, head = 22, opacity = 1 }) => {
+  const k = clamp(progress, 0, 1);
+  if (k <= 0.001 || points.length < 2 || opacity <= 0) return null;
+  const seg: number[] = [];
+  let total = 0;
+  for (let i = 1; i < points.length; i++) {
+    const d = Math.hypot(points[i][0] - points[i - 1][0], points[i][1] - points[i - 1][1]);
+    seg.push(d);
+    total += d;
+  }
+  const want = total * k;
+  const drawn: [number, number][] = [points[0]];
+  let acc = 0;
+  for (let i = 1; i < points.length; i++) {
+    const d = seg[i - 1];
+    if (acc + d >= want) {
+      const u = d > 0 ? (want - acc) / d : 0;
+      drawn.push([points[i - 1][0] + (points[i][0] - points[i - 1][0]) * u, points[i - 1][1] + (points[i][1] - points[i - 1][1]) * u]);
+      break;
+    }
+    drawn.push(points[i]);
+    acc += d;
+  }
+  const tip = drawn[drawn.length - 1];
+  // arah kepala dari ~head px terakhir jalur (stabil di busur)
+  let back = drawn[0];
+  let rem = head;
+  for (let i = drawn.length - 1; i > 0; i--) {
+    const d = Math.hypot(drawn[i][0] - drawn[i - 1][0], drawn[i][1] - drawn[i - 1][1]);
+    if (d >= rem) {
+      const u = rem / d;
+      back = [drawn[i][0] + (drawn[i - 1][0] - drawn[i][0]) * u, drawn[i][1] + (drawn[i - 1][1] - drawn[i][1]) * u];
+      break;
+    }
+    rem -= d;
+    back = drawn[i - 1];
+  }
+  const ang = Math.atan2(tip[1] - back[1], tip[0] - back[0]);
+  const hs = head * ip(want, [0, head * 1.5], [0.4, 1]);
+  const p1: [number, number] = [tip[0] - Math.cos(ang - 0.5) * hs, tip[1] - Math.sin(ang - 0.5) * hs];
+  const p2: [number, number] = [tip[0] - Math.cos(ang + 0.5) * hs, tip[1] - Math.sin(ang + 0.5) * hs];
+  // garis berhenti sedikit sebelum ujung agar tidak menembus kepala
+  const body = drawn.slice(0, -1).concat([[tip[0] - Math.cos(ang) * hs * 0.6, tip[1] - Math.sin(ang) * hs * 0.6]]);
+  const col = color ?? stylePreset.palette.accentSecondary;
+  const d = body.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+  return (
+    <svg style={{ position: 'absolute', inset: 0, overflow: 'visible', pointerEvents: 'none', opacity }} width="100%" height="100%">
+      <path d={d} fill="none" stroke="#FFFFFF" strokeOpacity={0.85} strokeWidth={width + 5} strokeLinecap="round" strokeLinejoin="round" />
+      <path d={d} fill="none" stroke={col} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" />
+      <polygon points={`${tip[0]},${tip[1]} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]}`} fill={col} stroke="#FFFFFF" strokeOpacity={0.85} strokeWidth={3} strokeLinejoin="round" />
+    </svg>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* 11. PENANDA POSISI (penonton tahu sedang di bagian mana)            */
+/* ------------------------------------------------------------------ */
+export interface BedahStepperProps {
+  stylePreset: MotionStylePreset;
+  /** Nama bagian alur, maks 2 kata per step, contoh ['Katup', 'Arus'] */
+  steps: string[];
+  /** Indeks step aktif. Pecahan (0.4) = sedang pindah, garis bawah bergeser. */
+  active: number;
+  size?: number;
+}
+
+/** Baris "01 KATUP  02 ARUS": step aktif berwarna + garis bawah, sisanya redup. Taruh di slot subLabel header. */
+export const BedahStepper: React.FC<BedahStepperProps> = ({ stylePreset, steps, active, size = 26 }) => {
+  const gap = size * 1.4;
+  return (
+    <span style={{ display: 'inline-flex', gap, fontFamily: stylePreset.typography.mono, fontWeight: 700, fontSize: size, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+      {steps.map((s, i) => {
+        const on = clamp(1 - Math.abs(active - i), 0, 1);
+        return (
+          <span key={s} style={{ position: 'relative', color: on > 0.5 ? stylePreset.palette.accentSecondary : stylePreset.palette.muted, opacity: 0.5 + on * 0.5, paddingBottom: 8 }}>
+            {`${String(i + 1).padStart(2, '0')} ${s}`}
+            <span style={{ position: 'absolute', left: 0, bottom: 0, height: 4, width: `${on * 100}%`, background: stylePreset.palette.accentSecondary, borderRadius: 2 }} />
+          </span>
+        );
+      })}
+    </span>
   );
 };

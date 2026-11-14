@@ -8,22 +8,13 @@ Output: [{"text": "...", "startMs": 0, "endMs": 0}, ...]
 """
 import argparse
 import json
+import os
 
 from faster_whisper import WhisperModel
 
 
-def main():
-    p = argparse.ArgumentParser()
-    p.add_argument("--audio", required=True)
-    p.add_argument("--text", default="")
-    p.add_argument("--lang", default="id")
-    p.add_argument("--model", default="small")
-    p.add_argument("--device", default="auto")
-    p.add_argument("--json", required=True)
-    a = p.parse_args()
-
-    compute = "int8"
-    model = WhisperModel(a.model, device=a.device, compute_type=compute)
+def transcribe(a, device):
+    model = WhisperModel(a.model, device=device, compute_type="int8")
     # Naskah sebagai prompt agar ejaan kata (nama brand, istilah lokal) mengikuti naskah.
     segments, _ = model.transcribe(
         a.audio,
@@ -39,6 +30,26 @@ def main():
             t = w.word.strip()
             if t:
                 words.append({"text": t, "startMs": round(w.start * 1000), "endMs": round(w.end * 1000)})
+    return words
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--audio", required=True)
+    p.add_argument("--text", default="")
+    p.add_argument("--lang", default="id")
+    p.add_argument("--model", default="small")
+    p.add_argument("--device", default=os.environ.get("WHISPER_DEVICE", "auto"))
+    p.add_argument("--json", required=True)
+    a = p.parse_args()
+
+    try:
+        words = transcribe(a, a.device)
+    except RuntimeError as e:
+        # "auto" memilih GPU bila CUDA terdeteksi, tapi cuBLAS/cuDNN sering tidak terpasang. Ulang di CPU.
+        if a.device == "cpu" or not any(k in str(e).lower() for k in ("cublas", "cudnn", "cuda")):
+            raise
+        words = transcribe(a, "cpu")
     with open(a.json, "w", encoding="utf-8") as f:
         json.dump(words, f, ensure_ascii=False)
 

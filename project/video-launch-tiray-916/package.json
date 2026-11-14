@@ -1,0 +1,20 @@
+{
+  "name": "video-launch-tiray-916",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render MainVideo out/v1.mp4 --codec h264 --audio-codec aac --gl=angle",
+    "stills": "node research/stills.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.220",
+    "@remotion/google-fonts": "4.0.220",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.220"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "typescript": "5.6.3"
+  }
+}

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import * as THREE from 'three';
 import { BEDAH_MATERIALS, BMesh, hexBoltGeometry, latheGeometry, MatSpec, pipeGeometry, useCutPlane } from './antislop/components/Bedah3D';
 import { createSeededRandom } from './antislop/theme/easing-and-timing';
+import { T } from './timeline';
 import {
   AIR_VALVE_TOP,
   COUPLING,
@@ -619,10 +620,7 @@ const CustomerInterior: React.FC<{ frame: number }> = ({ frame }) => {
   const tapY = SPOUT_TIP[1] + 0.12;
 
   // tetes air di adegan pembuka (keran dibuka, hanya menetes)
-  const drips = [
-    [18, 30, 47],
-    [86, 98, 115],
-  ].map(([grow, fall, land], i) => {
+  const drips = T.drips.map(([grow, fall, land], i) => {
     if (frame < grow || frame > land) return null;
     const tt = frame < fall ? 0 : (frame - fall) / (land - fall);
     const yy = SPOUT_TIP[1] - 0.02 - tt * tt * (SPOUT_TIP[1] - 0.02 - basinBottom - 0.02);
@@ -688,19 +686,19 @@ const BUBBLES = (() => {
 })();
 const Bubbles: React.FC<{ frame: number }> = ({ frame }) => {
   const g = useGeoms();
-  if (frame < 646) return null;
+  if (frame < T.fillMain[0]) return null;
   const front = mainSeg(frame)[1];
   return (
     <group>
       {BUBBLES.map((b) => {
         if (front < b.s) return null;
-        const t0 = 690 + b.i * 9;
-        const tt = Math.max(0, Math.min(1, (frame - t0) / (905 - t0)));
+        const t0 = T.fillMain[0] + 4 + b.i * 9;
+        const tt = Math.max(0, Math.min(1, (frame - t0) / (T.fillDist[1] - t0)));
         const e = tt * tt * (3 - 2 * tt);
         const s = b.s + (S_D - b.s) * e;
         const p = pointAt(MAIN, s);
         const topY = p[1] + PIPE_R_IN - b.r - 0.005;
-        const esc = 926 + b.i * 7;
+        const esc = T.bubbleEscape + b.i * 7;
         let y = topY;
         let x = p[0] + b.dx;
         let z = p[2];
@@ -748,7 +746,7 @@ export const World3D: React.FC<{ frame: number }> = ({ frame }) => {
         rOut={PIPE_R_OUT}
         rIn={PIPE_R_IN}
         seg={[[0, GATE_S], main]}
-        flow={flowOn(frame, 1092)}
+        flow={flowOn(frame, T.pressureUp[1])}
         frame={frame}
         wop={wop}
         cut={netCut}
@@ -758,7 +756,7 @@ export const World3D: React.FC<{ frame: number }> = ({ frame }) => {
       <GateValve frame={frame} cut={netCut} />
       <Coupling cut={netCut} />
       <AirValve cut={netCut} />
-      <PipeRun pts={DIST} rOut={DIST_R_OUT} rIn={DIST_R_IN} seg={[dist]} flow={flowOn(frame, 1106)} frame={frame} wop={wop} cut={netCut} kind="dist" />
+      <PipeRun pts={DIST} rOut={DIST_R_OUT} rIn={DIST_R_IN} seg={[dist]} flow={flowOn(frame, T.pressureUp[1] + 6)} frame={frame} wop={wop} cut={netCut} kind="dist" />
       <Gauge frame={frame} />
       {NEIGHBOURS.map((n, i) => (
         <group key={i}>
