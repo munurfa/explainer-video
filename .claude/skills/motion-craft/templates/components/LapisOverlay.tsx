@@ -15,6 +15,8 @@ import { warnText } from './BedahOverlay';
  *   - label bagian: pill putih kecil + titik warna bagian + garis tipis (<LapisLabel />)
  *   - kalimat hook bebas ditulis user (<LapisHook text="..." />), bukan teks tetap
  *
+ *   - CTA end card: badge toko aplikasi resmi + jari yang menekannya (<StoreBadgeTap />), bukan teks "Download di ..."
+ *
  * PENGECUALIAN ATURAN KERAS 1 & 2: pill hanya lewat <LapisCaption />, <StatusBadge />, <LapisLabel />, <LapisCard />.
  * Titik warna hanya boleh di dalam <LapisLabel /> (penanda warna bagian). Karakter bullet di string tetap dilarang.
  */
@@ -157,7 +159,10 @@ export interface LapisHeaderProps {
   steps?: string[];
   activeStep?: number;
   subLabel?: string;
+  /** Frame judul ini masuk. Ganti per bab supaya judul naik lagi */
   start: number;
+  /** Frame stepper, counter, dan badge pertama kali masuk (default = start). Isi dengan awal video agar tidak berkedip tiap ganti bab */
+  subStart?: number;
   /** Logo di tepi kanan header (<Img /> atau <BrandLogo />). Mode 'umum': boleh kosong */
   logo?: React.ReactNode;
   /** Slot kiri baris data (biasanya <LiveCounter />) */
@@ -170,7 +175,7 @@ export interface LapisHeaderProps {
   side?: number;
 }
 
-export const LapisHeader: React.FC<LapisHeaderProps> = ({ stylePreset, before, keyword, after, steps, activeStep = 0, subLabel, start, logo, data, right, keywordColor, titleSize, top, side }) => {
+export const LapisHeader: React.FC<LapisHeaderProps> = ({ stylePreset, before, keyword, after, steps, activeStep = 0, subLabel, start, subStart, logo, data, right, keywordColor, titleSize, top, side }) => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const L = lapisLayout(width, height);
@@ -178,8 +183,9 @@ export const LapisHeader: React.FC<LapisHeaderProps> = ({ stylePreset, before, k
   const size = titleSize ?? L.titleSize;
   const inner = width - pad * 2;
   const t = ip(frame, [start, start + 14], [0, 1], easeOutExpo);
-  const t2 = ip(frame, [start + 4, start + 18], [0, 1], easeOutExpo);
-  const t3 = ip(frame, [start + 8, start + 22], [0, 1], easeOutExpo);
+  const s2 = subStart ?? start;
+  const t2 = ip(frame, [s2 + 4, s2 + 18], [0, 1], easeOutExpo);
+  const t3 = ip(frame, [s2 + 8, s2 + 22], [0, 1], easeOutExpo);
   const bg = stylePreset.palette.bg;
 
   return (
@@ -216,7 +222,7 @@ export const LapisHeader: React.FC<LapisHeaderProps> = ({ stylePreset, before, k
             {after ? ` ${after}` : ''}
           </div>
         </div>
-        {logo ? <div style={{ flexShrink: 0, opacity: t }}>{logo}</div> : null}
+        {logo ? <div style={{ flexShrink: 0, opacity: subStart === undefined ? t : ip(frame, [s2, s2 + 14], [0, 1], easeOutExpo) }}>{logo}</div> : null}
       </div>
 
       {steps && steps.length > 0 ? (
@@ -445,7 +451,7 @@ export const LapisBar: React.FC<{ label: string; value: number; color: string; s
 /* ------------------------------------------------------------------ */
 export interface LapisHookProps {
   stylePreset: MotionStylePreset;
-  /** Kalimat hook dari user (lapisHookText()). Maks 7 kata */
+  /** Kalimat hook dari user (lapisHookText()). Maks 7 kata. Baris baru di dalam teks = ganti baris manual */
   text: string;
   start: number;
   end: number;
@@ -481,6 +487,7 @@ export const LapisHook: React.FC<LapisHookProps> = ({ stylePreset, text, start, 
               letterSpacing: '-0.03em',
               color: stylePreset.palette.ink,
               textWrap: 'balance',
+              whiteSpace: 'pre-line',
               transform: `translateY(${(1 - enter) * 60}%)`,
               opacity: enter,
             } as React.CSSProperties}
@@ -590,6 +597,115 @@ export const LapisCaption: React.FC<LapisCaptionProps> = ({ words, stylePreset, 
           );
         })}
       </div>
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/* 10. BADGE TOKO APLIKASI + JARI MENEKAN (CTA end card)               */
+/* ------------------------------------------------------------------ */
+export interface TapFingerProps {
+  /** Titik yang ditekan ujung jari [x, y] di layar */
+  target: [number, number];
+  /** Frame jari mulai masuk */
+  start: number;
+  /** Frame jari menyentuh target */
+  tapAt: number;
+  /** Tinggi tangan (px) */
+  size?: number;
+  ink?: string;
+}
+
+/**
+ * Tangan dengan telunjuk yang masuk dari kanan bawah, menekan `target` di frame `tapAt`, lalu mengangkat sedikit.
+ * Ini kursor (fungsional), bukan ikon hiasan: hanya dipakai untuk menekan tombol atau badge yang nyata.
+ * SFX klik dipasang pemanggil di frame `tapAt` (Aturan Keras 4).
+ */
+export const TapFinger: React.FC<TapFingerProps> = ({ target, start, tapAt, size = 190, ink = '#16243B' }) => {
+  const frame = useCurrentFrame();
+  if (frame < start) return null;
+  const travel = ip(frame, [start, tapAt - 2], [0, 1], easeInOutSmooth);
+  const press = ip(frame, [tapAt - 2, tapAt, tapAt + 5, tapAt + 12], [0, 1, 1, 0], (x) => x);
+  const lift = ip(frame, [tapAt + 5, tapAt + 16], [0, 1], easeInOutSmooth);
+  const s = size / 150;
+  // ujung telunjuk ada di (57, 10) pada viewBox 120x150
+  const x = target[0] - 57 * s + (1 - travel) * 190 + lift * 14;
+  const y = target[1] - 10 * s + (1 - travel) * 300 + lift * 30 + press * 5;
+  const shapes = (
+    <>
+      <rect x={44} y={6} width={26} height={84} rx={13} />
+      <rect x={30} y={64} width={72} height={72} rx={26} />
+      <rect x={68} y={52} width={19} height={40} rx={9.5} />
+      <rect x={84} y={58} width={18} height={40} rx={9} />
+      <rect x={12} y={74} width={24} height={50} rx={12} transform="rotate(-28 24 99)" />
+    </>
+  );
+  return (
+    <svg
+      width={120 * s}
+      height={150 * s}
+      viewBox="0 0 120 150"
+      style={{ position: 'absolute', left: x, top: y, overflow: 'visible', pointerEvents: 'none', opacity: ip(frame, [start, start + 6], [0, 1]), transform: `rotate(-14deg) scale(${1 - press * 0.07})`, transformOrigin: '47% 7%' }}
+    >
+      <g fill={ink} stroke={ink} strokeWidth={11} strokeLinejoin="round">
+        {shapes}
+      </g>
+      <g fill="#FFFFFF">{shapes}</g>
+    </svg>
+  );
+};
+
+export interface StoreBadgeTapProps {
+  /** Badge toko RESMI sebagai <Img /> (mis. assets/badges/google-play-id.png). Jangan digambar atau diketik ulang */
+  badge: React.ReactNode;
+  /** Titik tengah badge di layar */
+  center: [number, number];
+  width: number;
+  height: number;
+  /** Frame badge masuk */
+  start: number;
+  /** Frame jari menekan badge (tambatkan ke kata ajakan di narasi, mis. "download") */
+  tapAt: number;
+  /** Warna riak tekan */
+  ripple?: string;
+  ink?: string;
+}
+
+/**
+ * CTA end card gaya #46: badge toko aplikasi resmi + jari yang menekannya.
+ * Badge masuk, jari datang dan menekan di `tapAt`, badge mengecil sesaat (utuh, tanpa distorsi) dan riak menyebar.
+ */
+export const StoreBadgeTap: React.FC<StoreBadgeTapProps> = ({ badge, center, width, height, start, tapAt, ripple = '#244DA9', ink }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (frame < start) return null;
+  const enter = springAt(frame, start, fps, SPRING_PRESETS.editorialSettle);
+  const press = ip(frame, [tapAt - 1, tapAt + 1, tapAt + 4, tapAt + 12], [0, 1, 1, 0], (x) => x);
+  const ring = ip(frame, [tapAt, tapAt + 18], [0, 1], easeOutExpo);
+  // titik tekan di sisi kanan bawah badge supaya tulisan badge tetap terbaca di balik jari
+  const tapPt: [number, number] = [center[0] + width * 0.3, center[1] + height * 0.2];
+  return (
+    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+      <div
+        style={{
+          position: 'absolute',
+          left: center[0] - width / 2,
+          top: center[1] - height / 2,
+          width,
+          height,
+          opacity: Math.min(1, enter * 1.6),
+          transform: `translateY(${(1 - enter) * 34}px) scale(${1 - press * 0.045})`,
+        }}
+      >
+        {badge}
+      </div>
+      {frame >= tapAt ? (
+        <svg style={{ position: 'absolute', inset: 0, overflow: 'visible' }} width="100%" height="100%">
+          <circle cx={tapPt[0]} cy={tapPt[1]} r={20 + ring * 150} fill="none" stroke={ripple} strokeWidth={3 + 11 * (1 - ring)} opacity={(1 - ring) * 0.85} />
+          <circle cx={tapPt[0]} cy={tapPt[1]} r={12 + ring * 80} fill={ripple} opacity={(1 - ring) * 0.22} />
+        </svg>
+      ) : null}
+      <TapFinger target={tapPt} start={Math.max(start + 6, tapAt - 16)} tapAt={tapAt} ink={ink} />
     </div>
   );
 };

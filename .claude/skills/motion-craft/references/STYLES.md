@@ -423,13 +423,13 @@ Font semuanya dari Google Fonts berlisensi terbuka (muat lewat `@remotion/google
 **Hindari:** meniru logo, produk, atau copy Apple; glow dan gradien; kursor yang bergerak tanpa tujuan; hasil yang langsung dipotong sebelum terbaca.
 
 ### 46. Bedah Lapis
-**Cocok:** cara kerja benda sehari-hari untuk penonton umum (alat rumah, mesin, kendaraan, gedung), "kok bisa", "apa isi di dalam X". Tidak terikat Tirta Ayu: mode brand `umum` (default) atau `tirta-ayu` ditanyakan dulu. Shorts 9:16, 55 sampai 80 detik.
+**Cocok:** cara kerja benda sehari-hari untuk penonton umum (alat rumah, mesin, kendaraan, gedung), "kok bisa", "apa isi di dalam X". Tidak terikat Tirta Ayu: mode brand `umum` (default) atau `tirta-ayu` ditanyakan dulu. Shorts 9:16, tepat 60 detik.
 **Visual:** krem #F4F1EA, tinta #1B2230, kata kunci biru #2B59C3, highlight kuning #FFC53D. Objek 3D clay pastel tanpa outline, bayangan lembut, cangkang putih gading, warna jenuh hanya untuk bagian yang dijelaskan (biru #4E9BE6, kuning #F4B63C, oranye #EE7B3A, mint #6FDBB3), tepi potong peach #F5C9A9. Overlay dari #44 yang diperbaiki: header 2 baris mulai y 200 dan hampir selebar layar (logo di tepi kanan), stepper berhuruf besar yang mengisi lebar header, counter, badge, caption karaoke di y 1540 sampai 1620 (selalu di bawah objek). Label bagian: pill putih kecil dengan titik warna bagian. Komponen: `templates/components/Lapis3D.tsx` dan `templates/components/LapisOverlay.tsx` (memakai ulang `Bedah3D.tsx` dan `BedahOverlay.tsx`).
-**Gerak dan kamera:** objek dibuka dengan melepas lapis luarnya satu per satu (`<Peel />`), lalu dipasang kembali di akhir. Kamera selalu melayang pelan (`driftHold`), boleh pindah langsung antarbagian yang terhubung, boleh bergerak bersama mekanisme. Chevron berbaris searah gerak nyata. Rekap: semua label tampil bersama di bidikan utuh.
+**Gerak dan kamera:** objek dibuka dengan melepas lapis luarnya satu per satu (`<Peel />`), lalu dipasang kembali di akhir. Kamera selalu melayang pelan (`driftHold`), boleh pindah langsung antarbagian yang terhubung, boleh bergerak bersama mekanisme. Chevron berbaris searah gerak nyata. Rekap: semua label tampil bersama di bidikan utuh. CTA: end card dengan badge toko aplikasi resmi yang ditekan jari tepat saat ajakan diucapkan (`<StoreBadgeTap />`), bukan teks.
 **Suara:** B25 (alt B27) dengan S-MEKANIK dan S-ORGANIK; cue lihat `references/style-sfx.json` kunci `"46"`.
 **Wajib ditanyakan dulu:** mode brand (`umum` / `tirta-ayu`) dan kalimat hook yang ditulis user (default "Yuk, kita bedah."). Lihat file gaya §0.
 **Pengecualian:** pill hanya lewat `<LapisCaption />`, `<StatusBadge />`, `<LapisLabel />`, `<LapisCard />`; titik warna hanya di dalam `<LapisLabel />` (file gaya §4.1).
-**Hindari:** outline, tone mapping filmik, bidang potong, warna jenuh di cangkang, objek atau label di bawah y 1500, kamera diam total atau shake, kalimat hook yang ditulis tetap di kode.
+**Hindari:** outline, tone mapping filmik, bidang potong, warna jenuh di cangkang, objek atau label di bawah y 1500, kamera diam total atau shake, kalimat hook yang ditulis tetap di kode, durasi di atas 60 detik, ajakan unduh berupa teks alih-alih badge resmi.
 
 ## Aturan Perpaduan dan Pengulangan
 

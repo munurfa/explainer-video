@@ -1,0 +1,1178 @@
+[
+  {
+    "text": "Pipa",
+    "startMs": 0,
+    "endMs": 360,
+    "role": "keyword",
+    "effect": "blur-sharp",
+    "scene": "S1"
+  },
+  {
+    "text": "udah",
+    "startMs": 360,
+    "endMs": 480,
+    "role": "support",
+    "effect": "draw-underline",
+    "scene": "S1"
+  },
+  {
+    "text": "dibenerin,",
+    "startMs": 480,
+    "endMs": 1080,
+    "role": "keyword",
+    "effect": "tracking-lock",
+    "scene": "S1"
+  },
+  {
+    "text": "kok",
+    "startMs": 1360,
+    "endMs": 1520,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S1"
+  },
+  {
+    "text": "air",
+    "startMs": 1520,
+    "endMs": 1840,
+    "role": "keyword",
+    "effect": "tracking-lock",
+    "scene": "S1"
+  },
+  {
+    "text": "belum",
+    "startMs": 1840,
+    "endMs": 2080,
+    "role": "support",
+    "effect": "mask-up",
+    "scene": "S1"
+  },
+  {
+    "text": "ngalir?",
+    "startMs": 2080,
+    "endMs": 2600,
+    "role": "support",
+    "effect": "blur-sharp",
+    "scene": "S1"
+  },
+  {
+    "text": "Yuh,",
+    "startMs": 2840,
+    "endMs": 3200,
+    "role": "support",
+    "effect": "tracking-lock",
+    "scene": "S2"
+  },
+  {
+    "text": "takon-takon",
+    "startMs": 3440,
+    "endMs": 3880,
+    "role": "keyword",
+    "effect": "split-merge",
+    "scene": "S2"
+  },
+  {
+    "text": "air.",
+    "startMs": 3880,
+    "endMs": 4300,
+    "role": "support",
+    "effect": "mask-up",
+    "scene": "S2"
+  },
+  {
+    "text": "Di",
+    "startMs": 4540,
+    "endMs": 4680,
+    "role": "connector",
+    "effect": "spring-pop",
+    "scene": "S3"
+  },
+  {
+    "text": "bawah",
+    "startMs": 4680,
+    "endMs": 4920,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S3"
+  },
+  {
+    "text": "tanah",
+    "startMs": 4920,
+    "endMs": 5300,
+    "role": "keyword",
+    "effect": "slide-mask",
+    "scene": "S3"
+  },
+  {
+    "text": "ada",
+    "startMs": 5300,
+    "endMs": 5520,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S3"
+  },
+  {
+    "text": "pipa",
+    "startMs": 5520,
+    "endMs": 5840,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S3"
+  },
+  {
+    "text": "panjang,",
+    "startMs": 5840,
+    "endMs": 6380,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S3"
+  },
+  {
+    "text": "dari",
+    "startMs": 6460,
+    "endMs": 6820,
+    "role": "connector",
+    "effect": "flip-3d",
+    "scene": "S3"
+  },
+  {
+    "text": "tandon",
+    "startMs": 6820,
+    "endMs": 7280,
+    "role": "support",
+    "effect": "draw-underline",
+    "scene": "S3"
+  },
+  {
+    "text": "sampai",
+    "startMs": 7280,
+    "endMs": 7720,
+    "role": "support",
+    "effect": "mask-up",
+    "scene": "S3"
+  },
+  {
+    "text": "rumah",
+    "startMs": 7720,
+    "endMs": 8000,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S3"
+  },
+  {
+    "text": "kamu.",
+    "startMs": 8000,
+    "endMs": 8380,
+    "role": "keyword",
+    "effect": "blur-sharp",
+    "scene": "S3"
+  },
+  {
+    "text": "Air",
+    "startMs": 8620,
+    "endMs": 8800,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S4"
+  },
+  {
+    "text": "Tirta",
+    "startMs": 8800,
+    "endMs": 9140,
+    "role": "support",
+    "effect": "slide-mask",
+    "scene": "S4"
+  },
+  {
+    "text": "Ayu",
+    "startMs": 9140,
+    "endMs": 9480,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S4"
+  },
+  {
+    "text": "turun",
+    "startMs": 9480,
+    "endMs": 9760,
+    "role": "keyword",
+    "effect": "draw-underline",
+    "scene": "S4"
+  },
+  {
+    "text": "sendiri",
+    "startMs": 9760,
+    "endMs": 10120,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S4"
+  },
+  {
+    "text": "dari",
+    "startMs": 10120,
+    "endMs": 10400,
+    "role": "connector",
+    "effect": "flip-3d",
+    "scene": "S4"
+  },
+  {
+    "text": "reservoir,",
+    "startMs": 10400,
+    "endMs": 10820,
+    "role": "keyword",
+    "effect": "mask-up",
+    "scene": "S4"
+  },
+  {
+    "text": "tandon",
+    "startMs": 11300,
+    "endMs": 11640,
+    "role": "keyword",
+    "effect": "slide-mask",
+    "scene": "S4"
+  },
+  {
+    "text": "raksasa",
+    "startMs": 11640,
+    "endMs": 12160,
+    "role": "keyword",
+    "effect": "blur-sharp",
+    "scene": "S4"
+  },
+  {
+    "text": "di",
+    "startMs": 12160,
+    "endMs": 12380,
+    "role": "connector",
+    "effect": "spring-pop",
+    "scene": "S4"
+  },
+  {
+    "text": "tempat",
+    "startMs": 12380,
+    "endMs": 12620,
+    "role": "support",
+    "effect": "slot-roll",
+    "scene": "S4"
+  },
+  {
+    "text": "tinggi.",
+    "startMs": 12620,
+    "endMs": 13040,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S4"
+  },
+  {
+    "text": "Lewat",
+    "startMs": 13280,
+    "endMs": 13480,
+    "role": "support",
+    "effect": "blur-sharp",
+    "scene": "S4"
+  },
+  {
+    "text": "pipa",
+    "startMs": 13480,
+    "endMs": 13720,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S4"
+  },
+  {
+    "text": "besar,",
+    "startMs": 13720,
+    "endMs": 14060,
+    "role": "support",
+    "effect": "mask-up",
+    "scene": "S4"
+  },
+  {
+    "text": "lalu",
+    "startMs": 14520,
+    "endMs": 14700,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S4"
+  },
+  {
+    "text": "pipa",
+    "startMs": 14700,
+    "endMs": 14960,
+    "role": "support",
+    "effect": "tracking-lock",
+    "scene": "S4"
+  },
+  {
+    "text": "kecil,",
+    "startMs": 14960,
+    "endMs": 15360,
+    "role": "support",
+    "effect": "slot-roll",
+    "scene": "S4"
+  },
+  {
+    "text": "sampai",
+    "startMs": 15620,
+    "endMs": 15940,
+    "role": "support",
+    "effect": "flip-3d",
+    "scene": "S4"
+  },
+  {
+    "text": "ke",
+    "startMs": 15940,
+    "endMs": 16160,
+    "role": "connector",
+    "effect": "spring-pop",
+    "scene": "S4"
+  },
+  {
+    "text": "keran",
+    "startMs": 16160,
+    "endMs": 16380,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S4"
+  },
+  {
+    "text": "kamu.",
+    "startMs": 16380,
+    "endMs": 16760,
+    "role": "support",
+    "effect": "mask-up",
+    "scene": "S4"
+  },
+  {
+    "text": "Waktu",
+    "startMs": 16980,
+    "endMs": 17160,
+    "role": "support",
+    "effect": "blur-sharp",
+    "scene": "S5"
+  },
+  {
+    "text": "pipa",
+    "startMs": 17160,
+    "endMs": 17460,
+    "role": "keyword",
+    "effect": "split-merge",
+    "scene": "S5"
+  },
+  {
+    "text": "diperbaiki,",
+    "startMs": 17460,
+    "endMs": 18000,
+    "role": "keyword",
+    "effect": "tracking-lock",
+    "scene": "S5"
+  },
+  {
+    "text": "alirannya",
+    "startMs": 18440,
+    "endMs": 18880,
+    "role": "keyword",
+    "effect": "draw-underline",
+    "scene": "S5"
+  },
+  {
+    "text": "ditutup",
+    "startMs": 18880,
+    "endMs": 19280,
+    "role": "keyword",
+    "effect": "wipe-highlight",
+    "scene": "S5"
+  },
+  {
+    "text": "dulu.",
+    "startMs": 19280,
+    "endMs": 19560,
+    "role": "keyword",
+    "effect": "slot-roll",
+    "scene": "S5"
+  },
+  {
+    "text": "Airnya",
+    "startMs": 19820,
+    "endMs": 20120,
+    "role": "support",
+    "effect": "flip-3d",
+    "scene": "S5"
+  },
+  {
+    "text": "habis,",
+    "startMs": 20120,
+    "endMs": 20580,
+    "role": "support",
+    "effect": "tracking-lock",
+    "scene": "S5"
+  },
+  {
+    "text": "pipanya",
+    "startMs": 20800,
+    "endMs": 21060,
+    "role": "keyword",
+    "effect": "mask-up",
+    "scene": "S5"
+  },
+  {
+    "text": "kosong.",
+    "startMs": 21060,
+    "endMs": 21620,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S5"
+  },
+  {
+    "text": "Begitu",
+    "startMs": 21900,
+    "endMs": 22200,
+    "role": "support",
+    "effect": "tracking-lock",
+    "scene": "S6"
+  },
+  {
+    "text": "dibuka",
+    "startMs": 22200,
+    "endMs": 22480,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S6"
+  },
+  {
+    "text": "lagi,",
+    "startMs": 22480,
+    "endMs": 22900,
+    "role": "support",
+    "effect": "slot-roll",
+    "scene": "S6"
+  },
+  {
+    "text": "air",
+    "startMs": 23140,
+    "endMs": 23320,
+    "role": "keyword",
+    "effect": "slide-mask",
+    "scene": "S6"
+  },
+  {
+    "text": "harus",
+    "startMs": 23320,
+    "endMs": 23660,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S6"
+  },
+  {
+    "text": "mengisi",
+    "startMs": 23660,
+    "endMs": 24000,
+    "role": "keyword",
+    "effect": "slide-mask",
+    "scene": "S6"
+  },
+  {
+    "text": "pipa",
+    "startMs": 24000,
+    "endMs": 24280,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S6"
+  },
+  {
+    "text": "besar",
+    "startMs": 24280,
+    "endMs": 24460,
+    "role": "keyword",
+    "effect": "tracking-lock",
+    "scene": "S6"
+  },
+  {
+    "text": "dulu.",
+    "startMs": 24460,
+    "endMs": 24820,
+    "role": "support",
+    "effect": "draw-underline",
+    "scene": "S6"
+  },
+  {
+    "text": "Baru",
+    "startMs": 25240,
+    "endMs": 25560,
+    "role": "support",
+    "effect": "mask-up",
+    "scene": "S6"
+  },
+  {
+    "text": "pipa",
+    "startMs": 25560,
+    "endMs": 25800,
+    "role": "support",
+    "effect": "flip-3d",
+    "scene": "S6"
+  },
+  {
+    "text": "kecil,",
+    "startMs": 25800,
+    "endMs": 26180,
+    "role": "keyword",
+    "effect": "draw-underline",
+    "scene": "S6"
+  },
+  {
+    "text": "sedikit",
+    "startMs": 26460,
+    "endMs": 26920,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S6"
+  },
+  {
+    "text": "demi",
+    "startMs": 26920,
+    "endMs": 27140,
+    "role": "support",
+    "effect": "flip-3d",
+    "scene": "S6"
+  },
+  {
+    "text": "sedikit.",
+    "startMs": 27140,
+    "endMs": 27600,
+    "role": "keyword",
+    "effect": "wipe-highlight",
+    "scene": "S6"
+  },
+  {
+    "text": "Mirip",
+    "startMs": 27820,
+    "endMs": 28080,
+    "role": "keyword",
+    "effect": "slot-roll",
+    "scene": "S6"
+  },
+  {
+    "text": "selang",
+    "startMs": 28080,
+    "endMs": 28340,
+    "role": "support",
+    "effect": "flip-3d",
+    "scene": "S6"
+  },
+  {
+    "text": "taman",
+    "startMs": 28340,
+    "endMs": 28640,
+    "role": "support",
+    "effect": "tracking-lock",
+    "scene": "S6"
+  },
+  {
+    "text": "yang",
+    "startMs": 28640,
+    "endMs": 28820,
+    "role": "connector",
+    "effect": "draw-underline",
+    "scene": "S6"
+  },
+  {
+    "text": "baru",
+    "startMs": 28820,
+    "endMs": 29020,
+    "role": "keyword",
+    "effect": "mask-up",
+    "scene": "S6"
+  },
+  {
+    "text": "dinyalakan.",
+    "startMs": 29020,
+    "endMs": 29560,
+    "role": "keyword",
+    "effect": "slot-roll",
+    "scene": "S6"
+  },
+  {
+    "text": "Di",
+    "startMs": 29560,
+    "endMs": 29940,
+    "role": "connector",
+    "effect": "blur-sharp",
+    "scene": "S7"
+  },
+  {
+    "text": "dalam",
+    "startMs": 29940,
+    "endMs": 30140,
+    "role": "connector",
+    "effect": "mask-up",
+    "scene": "S7"
+  },
+  {
+    "text": "pipa",
+    "startMs": 30140,
+    "endMs": 30580,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S7"
+  },
+  {
+    "text": "juga",
+    "startMs": 30580,
+    "endMs": 30840,
+    "role": "support",
+    "effect": "tracking-lock",
+    "scene": "S7"
+  },
+  {
+    "text": "ada",
+    "startMs": 30840,
+    "endMs": 31120,
+    "role": "support",
+    "effect": "draw-underline",
+    "scene": "S7"
+  },
+  {
+    "text": "angin",
+    "startMs": 31120,
+    "endMs": 31460,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S7"
+  },
+  {
+    "text": "yang",
+    "startMs": 31460,
+    "endMs": 31640,
+    "role": "connector",
+    "effect": "blur-sharp",
+    "scene": "S7"
+  },
+  {
+    "text": "terjebak.",
+    "startMs": 31640,
+    "endMs": 32100,
+    "role": "keyword",
+    "effect": "slide-mask",
+    "scene": "S7"
+  },
+  {
+    "text": "Angin",
+    "startMs": 32320,
+    "endMs": 32520,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S7"
+  },
+  {
+    "text": "ini",
+    "startMs": 32520,
+    "endMs": 32780,
+    "role": "connector",
+    "effect": "flip-3d",
+    "scene": "S7"
+  },
+  {
+    "text": "dibuang",
+    "startMs": 32780,
+    "endMs": 33280,
+    "role": "keyword",
+    "effect": "slot-roll",
+    "scene": "S7"
+  },
+  {
+    "text": "lewat",
+    "startMs": 33280,
+    "endMs": 33520,
+    "role": "support",
+    "effect": "mask-up",
+    "scene": "S7"
+  },
+  {
+    "text": "katup",
+    "startMs": 33520,
+    "endMs": 33800,
+    "role": "support",
+    "effect": "flip-3d",
+    "scene": "S7"
+  },
+  {
+    "text": "udara,",
+    "startMs": 33800,
+    "endMs": 34240,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S7"
+  },
+  {
+    "text": "lubang",
+    "startMs": 34480,
+    "endMs": 34700,
+    "role": "keyword",
+    "effect": "mask-up",
+    "scene": "S7"
+  },
+  {
+    "text": "kecil",
+    "startMs": 34700,
+    "endMs": 35100,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S7"
+  },
+  {
+    "text": "di",
+    "startMs": 35100,
+    "endMs": 35300,
+    "role": "connector",
+    "effect": "flip-3d",
+    "scene": "S7"
+  },
+  {
+    "text": "titik",
+    "startMs": 35300,
+    "endMs": 35620,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S7"
+  },
+  {
+    "text": "tertinggi.",
+    "startMs": 35620,
+    "endMs": 36120,
+    "role": "keyword",
+    "effect": "tracking-lock",
+    "scene": "S7"
+  },
+  {
+    "text": "Kalau",
+    "startMs": 36340,
+    "endMs": 36520,
+    "role": "support",
+    "effect": "blur-sharp",
+    "scene": "S7"
+  },
+  {
+    "text": "nggak,",
+    "startMs": 36520,
+    "endMs": 36820,
+    "role": "support",
+    "effect": "draw-underline",
+    "scene": "S7"
+  },
+  {
+    "text": "airnya",
+    "startMs": 37020,
+    "endMs": 37360,
+    "role": "support",
+    "effect": "slide-mask",
+    "scene": "S7"
+  },
+  {
+    "text": "nyendat.",
+    "startMs": 37360,
+    "endMs": 37780,
+    "role": "keyword",
+    "effect": "tracking-lock",
+    "scene": "S7"
+  },
+  {
+    "text": "Setelah",
+    "startMs": 38040,
+    "endMs": 38340,
+    "role": "keyword",
+    "effect": "wipe-highlight",
+    "scene": "S8"
+  },
+  {
+    "text": "pipa",
+    "startMs": 38340,
+    "endMs": 38600,
+    "role": "support",
+    "effect": "slot-roll",
+    "scene": "S8"
+  },
+  {
+    "text": "penuh,",
+    "startMs": 38600,
+    "endMs": 38960,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S8"
+  },
+  {
+    "text": "dorongan",
+    "startMs": 39240,
+    "endMs": 39620,
+    "role": "keyword",
+    "effect": "wipe-highlight",
+    "scene": "S8"
+  },
+  {
+    "text": "air",
+    "startMs": 39620,
+    "endMs": 39880,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S8"
+  },
+  {
+    "text": "pelan-pelan",
+    "startMs": 39880,
+    "endMs": 40680,
+    "role": "keyword",
+    "effect": "draw-underline",
+    "scene": "S8"
+  },
+  {
+    "text": "pulih.",
+    "startMs": 40680,
+    "endMs": 41100,
+    "role": "support",
+    "effect": "blur-sharp",
+    "scene": "S8"
+  },
+  {
+    "text": "Baru",
+    "startMs": 41360,
+    "endMs": 41740,
+    "role": "keyword",
+    "effect": "split-merge",
+    "scene": "S8"
+  },
+  {
+    "text": "deh,",
+    "startMs": 41740,
+    "endMs": 41920,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S8"
+  },
+  {
+    "text": "air",
+    "startMs": 42120,
+    "endMs": 42260,
+    "role": "support",
+    "effect": "slide-mask",
+    "scene": "S8"
+  },
+  {
+    "text": "keluar",
+    "startMs": 42260,
+    "endMs": 42600,
+    "role": "support",
+    "effect": "draw-underline",
+    "scene": "S8"
+  },
+  {
+    "text": "dari",
+    "startMs": 42600,
+    "endMs": 42880,
+    "role": "connector",
+    "effect": "wipe-highlight",
+    "scene": "S8"
+  },
+  {
+    "text": "keran.",
+    "startMs": 42880,
+    "endMs": 43160,
+    "role": "support",
+    "effect": "spring-pop",
+    "scene": "S8"
+  },
+  {
+    "text": "Makanya",
+    "startMs": 43380,
+    "endMs": 43860,
+    "role": "keyword",
+    "effect": "draw-underline",
+    "scene": "S9"
+  },
+  {
+    "text": "tiap",
+    "startMs": 44140,
+    "endMs": 44320,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S9"
+  },
+  {
+    "text": "daerah",
+    "startMs": 44320,
+    "endMs": 44800,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S9"
+  },
+  {
+    "text": "beda",
+    "startMs": 44800,
+    "endMs": 45120,
+    "role": "support",
+    "effect": "flip-3d",
+    "scene": "S9"
+  },
+  {
+    "text": "waktunya.",
+    "startMs": 45120,
+    "endMs": 45600,
+    "role": "keyword",
+    "effect": "mask-up",
+    "scene": "S9"
+  },
+  {
+    "text": "Tergantung",
+    "startMs": 45800,
+    "endMs": 46240,
+    "role": "keyword",
+    "effect": "tracking-lock",
+    "scene": "S9"
+  },
+  {
+    "text": "tinggi",
+    "startMs": 46240,
+    "endMs": 46540,
+    "role": "keyword",
+    "effect": "blur-sharp",
+    "scene": "S9"
+  },
+  {
+    "text": "rendahnya,",
+    "startMs": 46540,
+    "endMs": 47080,
+    "role": "keyword",
+    "effect": "mask-up",
+    "scene": "S9"
+  },
+  {
+    "text": "jauh",
+    "startMs": 47360,
+    "endMs": 47600,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S9"
+  },
+  {
+    "text": "dekatnya,",
+    "startMs": 47600,
+    "endMs": 48140,
+    "role": "keyword",
+    "effect": "tracking-lock",
+    "scene": "S9"
+  },
+  {
+    "text": "dan",
+    "startMs": 48340,
+    "endMs": 48400,
+    "role": "connector",
+    "effect": "flip-3d",
+    "scene": "S9"
+  },
+  {
+    "text": "besar",
+    "startMs": 48400,
+    "endMs": 48720,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S9"
+  },
+  {
+    "text": "pipanya.",
+    "startMs": 48720,
+    "endMs": 49180,
+    "role": "keyword",
+    "effect": "flip-3d",
+    "scene": "S9"
+  },
+  {
+    "text": "Jadi",
+    "startMs": 49540,
+    "endMs": 49900,
+    "role": "support",
+    "effect": "blur-sharp",
+    "scene": "S10"
+  },
+  {
+    "text": "sabar",
+    "startMs": 50080,
+    "endMs": 50300,
+    "role": "keyword",
+    "effect": "draw-underline",
+    "scene": "S10"
+  },
+  {
+    "text": "sebentar,",
+    "startMs": 50300,
+    "endMs": 50640,
+    "role": "keyword",
+    "effect": "flip-3d",
+    "scene": "S10"
+  },
+  {
+    "text": "ya.",
+    "startMs": 50640,
+    "endMs": 50940,
+    "role": "connector",
+    "effect": "mask-up",
+    "scene": "S10"
+  },
+  {
+    "text": "Info",
+    "startMs": 51180,
+    "endMs": 51480,
+    "role": "support",
+    "effect": "tracking-lock",
+    "scene": "S10"
+  },
+  {
+    "text": "gangguan",
+    "startMs": 51480,
+    "endMs": 51980,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S10"
+  },
+  {
+    "text": "bisa",
+    "startMs": 51980,
+    "endMs": 52200,
+    "role": "connector",
+    "effect": "slide-mask",
+    "scene": "S10"
+  },
+  {
+    "text": "kamu",
+    "startMs": 52200,
+    "endMs": 52440,
+    "role": "support",
+    "effect": "blur-sharp",
+    "scene": "S10"
+  },
+  {
+    "text": "cek",
+    "startMs": 52440,
+    "endMs": 52680,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S10"
+  },
+  {
+    "text": "di",
+    "startMs": 52680,
+    "endMs": 52820,
+    "role": "connector",
+    "effect": "wipe-highlight",
+    "scene": "S10"
+  },
+  {
+    "text": "aplikasi",
+    "startMs": 52820,
+    "endMs": 53220,
+    "role": "keyword",
+    "effect": "draw-underline",
+    "scene": "S10"
+  },
+  {
+    "text": "Tiray,",
+    "startMs": 53220,
+    "endMs": 53660,
+    "role": "support",
+    "effect": "wipe-highlight",
+    "scene": "S10"
+  },
+  {
+    "text": "atau",
+    "startMs": 53840,
+    "endMs": 54160,
+    "role": "connector",
+    "effect": "slot-roll",
+    "scene": "S10"
+  },
+  {
+    "text": "tanya",
+    "startMs": 54160,
+    "endMs": 54580,
+    "role": "keyword",
+    "effect": "flip-3d",
+    "scene": "S10"
+  },
+  {
+    "text": "lewat",
+    "startMs": 54580,
+    "endMs": 54900,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S10"
+  },
+  {
+    "text": "WhatsApp",
+    "startMs": 54900,
+    "endMs": 55200,
+    "role": "keyword",
+    "effect": "spring-pop",
+    "scene": "S10"
+  },
+  {
+    "text": "Tirta",
+    "startMs": 55200,
+    "endMs": 55660,
+    "role": "support",
+    "effect": "flip-3d",
+    "scene": "S10"
+  },
+  {
+    "text": "Ayu.",
+    "startMs": 55660,
+    "endMs": 55980,
+    "role": "keyword",
+    "effect": "blur-sharp",
+    "scene": "S10"
+  },
+  {
+    "text": "Yuh",
+    "startMs": 56200,
+    "endMs": 56500,
+    "role": "support",
+    "effect": "split-merge",
+    "scene": "S11"
+  },
+  {
+    "text": "buka",
+    "startMs": 56600,
+    "endMs": 56740,
+    "role": "support",
+    "effect": "mask-up",
+    "scene": "S11"
+  },
+  {
+    "text": "Tiray!",
+    "startMs": 56740,
+    "endMs": 57180,
+    "role": "support",
+    "effect": "blur-sharp",
+    "scene": "S11"
+  },
+  {
+    "text": "Monggo,",
+    "startMs": 57180,
+    "endMs": 57940,
+    "role": "keyword",
+    "effect": "wipe-highlight",
+    "scene": "S11"
+  },
+  {
+    "text": "download",
+    "startMs": 58100,
+    "endMs": 58460,
+    "role": "keyword",
+    "effect": "flip-3d",
+    "scene": "S11"
+  },
+  {
+    "text": "aplikasinya!",
+    "startMs": 58460,
+    "endMs": 59120,
+    "role": "keyword",
+    "effect": "slot-roll",
+    "scene": "S11"
+  }
+]

@@ -130,7 +130,7 @@ node "<skill>/scripts/fetch-brand-logo.mjs" --brands "<brand,...>" --project-dir
 # tulis scene di src/, lalu contact sheet 1 still per scene (pita merah = zona tertutup UI platform)
 node "<skill>/scripts/storyboard-preview.mjs" --comp MainVideo --plan research/scenes-plan.json --safe-zone   # scene 3D: --gl angle
 ```
-**Gaya #46 Bedah Lapis:** sebelum menulis storyboard, tanyakan dua hal ke user dan tunggu jawabannya: (1) mode brand `umum` atau `tirta-ayu`, (2) kalimat hook yang ia tulis sendiri (default "Yuk, kita bedah."). Aturannya di `references/styles/46-bedah-lapis.md` §0. Catat jawabannya di bagian atas `research/storyboard.md`.
+**Gaya #46 Bedah Lapis:** sebelum menulis storyboard, tanyakan dua hal ke user dan tunggu jawabannya: (1) mode brand `umum` atau `tirta-ayu`, (2) kalimat hook yang ia tulis sendiri (default "Yuk, kita bedah."). Aturannya di `references/styles/46-bedah-lapis.md` §0. Catat jawabannya di bagian atas `research/storyboard.md`. Gaya #46 juga mengunci durasi 60 detik (narasi kepanjangan dipadatkan dengan `scripts/tighten-vo.mjs`) dan menutup video dengan badge toko aplikasi resmi yang ditekan jari (`<StoreBadgeTap />`, file gaya §5.4 dan §5.5).
 
 Isi `research/storyboard.md` dari `templates/STORYBOARD.template.md` (hook <= 3 dtk di scene 1, CTA di scene terakhir). Ikuti struktur penjelasan di `references/AUDIENS-AWAM.md` §5, dan pastikan tiap konsep yang disebut narasi punya visual di scene yang sama. **[STOP – TUNGGU APPROVAL]** tunjukkan tabel scene + `out/storyboard/contact-sheet.png`.
 

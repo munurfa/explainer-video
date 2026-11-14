@@ -27,7 +27,7 @@ Di Claude Code, pertanyaan 1 boleh lewat AskUserQuestion; pertanyaan 2 teks beba
 - **Dependensi wajib:** sama dengan #44 (`@remotion/three@<versi-remotion> three@0.169.0 @react-three/fiber@8.17.10 @types/three@0.169.0`). Render: `--gl=angle`.
 - **Cocok Untuk:** cara kerja benda sehari-hari (alat rumah, mesin, kendaraan, gedung), "kok bisa", "apa isi di dalam X", edukasi umum, sains populer.
 - **Kata Kunci Pemicu di Brief:** `bedah lapis`, `isi di dalam`, `di balik`, `buka`, `lepas panel`, `cara kerja`, `kok bisa`, `clay`, `pastel`
-- **Karakter & DNA Visual:** Shorts vertikal 9:16, 55–80 detik, satu kamera yang terus melayang tanpa hard cut. Satu benda nyata tampil sebagai model 3D **clay pastel**: permukaan matte, tanpa outline, bayangan sangat lembut, lantai menyatu dengan latar krem. Cangkang benda netral (putih gading), dan **warna jenuh hanya untuk bagian yang dijelaskan** (satu bagian = satu warna). Benda itu dibuka dengan melepas lapis luarnya satu per satu sampai mekanismenya terlihat, lalu **dipasang kembali di akhir video**.
+- **Karakter & DNA Visual:** Shorts vertikal 9:16, **tepat 60 detik** (1800 frame @30 fps, lihat §5.4), satu kamera yang terus melayang tanpa hard cut. Satu benda nyata tampil sebagai model 3D **clay pastel**: permukaan matte, tanpa outline, bayangan sangat lembut, lantai menyatu dengan latar krem. Cangkang benda netral (putih gading), dan **warna jenuh hanya untuk bagian yang dijelaskan** (satu bagian = satu warna). Benda itu dibuka dengan melepas lapis luarnya satu per satu sampai mekanismenya terlihat, lalu **dipasang kembali di akhir video**.
 
 **Panggung 9:16 (1080 × 1920).** Sumber angka: `lapisLayout()` di `LapisOverlay.tsx`.
 
@@ -142,6 +142,7 @@ Aturan teks #44 tetap berlaku: setiap teks di layar **maks 7 kata** dan terbaca 
 | `<LapisCard />` + `<LapisBar />` | Kartu mini semi-transparan untuk perbandingan dua batang atau satu grafik kecil |
 | `<LapisHook />` + `hookSaturation()` | Jeda hook: tirai tipis, kalimat user besar di tengah panggung, warna objek turun lalu kembali |
 | `<LapisCaption />` | Caption karaoke di posisi #46, pecah baris per kalimat |
+| `<StoreBadgeTap />` + `<TapFinger />` | CTA end card: badge toko aplikasi resmi masuk, jari datang dan menekannya di frame `tapAt`, badge mengecil sesaat dan riak menyebar. `<TapFinger />` boleh dipakai sendiri untuk menekan tombol nyata lain |
 | Dipakai ulang dari #44 | `LiveCounter`, `StatusBadge`, `FlowArrow`, `sequenceBeats`, `holdFrames`, `warnText`, `BEDAH_SEMANTIC` (diekspor ulang dari `LapisOverlay.tsx`) |
 
 ---
@@ -157,7 +158,7 @@ Aturan teks #44 tetap berlaku: setiap teks di layar **maks 7 kata** dan terbaca 
 | 3. Buka | Lapis dilepas satu per satu (16–20 frame per lapis, selang 6–8 frame) | SFX satu kali di awal lepas |
 | 4. Mekanisme | 2–5 bab, satu bagian per bab | Stepper bergeser, satu label per bab, chevron, counter |
 | 5. Rekap | Kamera mundur ke objek utuh, semua label tampil bersama | Label rekap muncul berurutan selang 3 frame |
-| 6. Tutup + CTA | Lapis dipasang kembali, CTA di caption / end card | Mode `tirta-ayu`: end card logo dari brand kit |
+| 6. Tutup + CTA | Lapis dipasang kembali, lalu end card: logo, tagar, dan **badge toko aplikasi resmi yang ditekan jari** (§5.5) | `<StoreBadgeTap />`. Mode `tirta-ayu`: logo vertikal brand kit + `#YuhBukaTiray` + badge Google Play |
 
 ### 5.2 Kamera melayang
 
@@ -174,6 +175,23 @@ Aturan teks #44 tetap berlaku: setiap teks di layar **maks 7 kata** dan terbaca 
 - **Counter** hanya bergerak selama mekanismenya bekerja.
 - **Badge skala/waktu** tetap wajib untuk setiap manipulasi skala atau waktu (`DIPERBESAR`, `GERAK LAMBAT`).
 - **Spring:** `editorialSettle`.
+
+### 5.4 Durasi dikunci 60 detik
+
+- `TOTAL_FRAMES = 1800`. Jangan menambah ekor di luar itu; end card harus muat di dalamnya.
+- Naskah ditulis untuk ±140 kata (2,4 sampai 2,5 kata/detik), kalimat terakhir = ajakan yang memuat kata kerja unduh ("download", "unduh", "pasang").
+- Kalau rekaman narator lebih panjang (mis. rekaman ElevenLabs buatan user): **jangan potong kalimat dan jangan minta rekam ulang dulu**. Padatkan dengan `node "<skill>/scripts/tighten-vo.mjs" --in <rekaman> --words public/words.json --out public/audio/narration-60.mp3 --target 59.4` (jeda panjang dipendekkan, sisanya dipercepat dengan nada tetap), lalu jalankan lagi `narrator-sync.mjs --audio` pada file hasilnya. Rekaman asli tidak ditimpa.
+- Batas tempo 1,15. Di atas itu skrip memberi peringatan: pendekkan naskah dan minta rekaman baru.
+- Semua beat ditambatkan ke kata di `public/words.json`, jadi setelah narasi dipadatkan beat ikut bergeser. Cek ulang still frame kunci dan aturan tayang teks (0,3 dtk per kata).
+
+### 5.5 CTA: badge toko + jari menekan
+
+- Ajakan unduh **tidak ditulis sebagai teks** ("Download di Google Play"). Tampilkan badge toko aplikasi resmi lewat `<StoreBadgeTap badge={<Img src={staticFile('badge/google-play-id.png')} />} ... />`.
+- Aset: `assets/badges/google-play-id.png` di skill (badge resmi "Dapatkan di Google Play"), salin ke `public/badge/` project. Toko lain: pakai badge resmi tokonya, jangan menggambar atau mengetik ulang. Badge tidak boleh diwarnai ulang, dipotong, atau diregangkan; mengecil sesaat secara utuh saat ditekan diperbolehkan.
+- Urutan: logo → tagar/ajakan → badge masuk → jari datang dari kanan bawah → **menekan tepat saat narator mengucapkan kata ajakan** (`tapAt = w('<scene>', 'download') + 4`) → riak menyebar, jari terangkat sedikit dan tetap di layar sampai akhir.
+- Titik tekan di sisi kanan bawah badge supaya tulisan badge tetap terbaca. Lebar badge 9:16: 440 sampai 480 px, di panggung (y 540 sampai 1500), di atas caption.
+- SFX `click` di frame `tapAt` (Aturan Keras 4). Tidak ada SFX lain di 12 frame sekitarnya.
+- Hanya tampilkan badge toko tempat aplikasinya memang tersedia (Tiray: Google Play saja).
 
 ---
 
@@ -198,8 +216,8 @@ const CAM = [
 ## 7. Desain Suara
 
 - **Backsound:** `B25`, alternatif `B27` (piano dokumenter) untuk nuansa tenang. Musik −24 dB di bawah narasi.
-- **Narasi:** tenang, ±2,2–2,5 kata/detik, **satu kalimat = satu gerakan di layar**.
-- **SFX terikat animasi:** lapis dilepas `transition-swipe` (sekali per rangkaian), label `pop-in`, counter mengunci `data-reveal`, klik mekanik `toggle-off` / pack `S-MEKANIK`, lapis dipasang kembali `transition-whoosh-soft`.
+- **Narasi:** tenang, ±2,4–2,5 kata/detik supaya muat 60 detik, **satu kalimat = satu gerakan di layar**.
+- **SFX terikat animasi:** lapis dilepas `transition-swipe` (sekali per rangkaian), label `pop-in`, counter mengunci `data-reveal`, klik mekanik `toggle-off` / pack `S-MEKANIK`, lapis dipasang kembali `transition-whoosh-soft`, jari menekan badge `click`.
 
 ---
 
@@ -249,6 +267,9 @@ const HOOK = lapisHookText(HOOK_USER, MODE);               // HOOK_USER dari per
 - **Jangan** mengubah posisi header/caption per komponen. Ubah di `lapisLayout()`.
 - **Jangan** hard cut, kamera shake, atau kamera diam total.
 - **Jangan** lupa memasang kembali lapis di akhir video.
+- **Jangan** melebihi 60 detik (1800 frame). Narasi yang kepanjangan dipadatkan dengan `tighten-vo.mjs`; tempo di atas 1,15 berarti naskah harus dipendekkan.
+- **Jangan** menulis ajakan unduh sebagai teks toko ("Download di Google Play"). Pakai badge resmi + `<StoreBadgeTap />`, dan jangan menggambar ulang, mewarnai, atau memotong badge.
+- **Jangan** memakai `<TapFinger />` sebagai hiasan. Jari hanya muncul untuk menekan tombol atau badge yang nyata, dan selalu disertai SFX klik di frame tekan.
 - **Jangan** menulis teks di layar lebih dari 7 kata atau tayang kurang dari 0,3 dtk per kata.
 - **Jangan** meniru nama, logo, watermark, atau tagline channel referensi mana pun. Yang diambil hanya bahasa visualnya.
 - **Jangan** memakai `Math.random`, timer, emoji, atau karakter `•` di string. Jangan lupa `--gl=angle`.

@@ -13,6 +13,7 @@ explainer/
 ├── project/
 │   ├── style-samples/           # katalog gaya visual, 2 rasio per gaya
 │   ├── video-pemulihan-air/     # video explainer 9:16 untuk Tirta Ayu
+│   ├── video-pemulihan-air-lapis/ # topik yang sama, gaya #46 Bedah Lapis, 60 detik
 │   └── video-launch-tiray/      # video peluncuran aplikasi Tiray
 └── sample/                      # hasil render sampel gaya (NN-slug/)
 ```
@@ -141,6 +142,12 @@ Tidak ada test suite. Verifikasi dilakukan dengan `npx tsc`, render still di fra
 - `research/narasi.txt`: naskah VO. `public/words.json`: timing per kata (edge-tts, suara `id-ID-ArdiNeural`) untuk caption & sinkron animasi.
 - `public/audio/`: `narration.mp3`, `music.wav`, `bed.wav`, `sfx-track.wav`. `public/brand/`: logo resmi Tirta Ayu (SVG). `public/ui/`: screenshot layar Tiray.
 - `out/`: hasil render berversi (`v1`, `v2`, `*-final.mp4`). File lama jangan ditimpa, buat versi baru.
+
+### `project/video-pemulihan-air-lapis`
+- 1080×1920, 30 fps, `TOTAL_FRAMES = 1800` (tepat 60 dtk), gaya #46 "Bedah Lapis", mode brand `tirta-ayu`, kalimat hook dari user.
+- `src/World.tsx` + `src/layout.ts`: diorama clay (tandon → pipa besar → pipa kecil → rumah, pipa tertanam) dengan 5 lapis yang dilepas, keadaan air, dan bidikan kamera. `src/MainVideo.tsx`: header per bab, label, chevron, layar Tiray, end card dengan badge Google Play + jari menekan, audio.
+- `src/timeline.ts`: semua beat ditambatkan ke kata di `public/words.json` lewat `w(scene, kata)`. Kalau narasi diganti, jalankan ulang narrator-sync dan beat ikut bergeser.
+- Narasi: `public/audio/narration.mp3` = rekaman asli user (ElevenLabs), `narration-60.mp3` = versi padat 60 dtk hasil `scripts/tighten-vo.mjs` milik skill. Timing v1 disimpan di `research/*-v1.json`.
 
 ## Konvensi
 

@@ -31,7 +31,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   VOICE_PROFILES,
-  alignWithWhisperX,
+  alignAny,
   estimateWords,
   geminiKey,
   hasPython,
@@ -198,20 +198,21 @@ if (opts.tts) {
   audioFile = opts.audio;
   const durMs = probeDurationMs(opts.audio);
   const allText = script.scenes.map((s) => s.text).join(' ');
-  if (hasPython('whisperx')) {
+  // Audio rekaman (mis. ElevenLabs buatan user): WhisperX bila ada, selain itu faster-whisper. `--align` memaksa salah satu.
+  const aligned = opts.align === 'none' ? null : alignAny(opts.audio, allText, lang, opts.align);
+  if (aligned) {
     try {
-      const bounds = alignWithWhisperX(opts.audio, allText, lang);
       const tokens = [];
       for (const sc of script.scenes) for (const t of sc.text.split(' ')) tokens.push({ t, scene: sc.id });
-      const mapped = mapBoundariesToTokens(tokens.map((x) => x.t), bounds, durMs);
+      const mapped = mapBoundariesToTokens(tokens.map((x) => x.t), aligned.bounds, durMs);
       const words = mapped.map((w, i) => ({ ...w, scene: tokens[i].scene }));
       result = { words, sceneSpans: spansFromWords(words), totalMs: durMs };
-      source = 'whisperx';
+      source = aligned.engine;
     } catch (err) {
-      notes.push(`WhisperX gagal (${err.message.split('\n')[0]}); memakai estimasi diskalakan ke durasi audio.`);
+      notes.push(`Pemetaan hasil ${aligned.engine} gagal (${err.message.split('\n')[0]}); memakai estimasi diskalakan ke durasi audio.`);
     }
   } else {
-    notes.push('WhisperX tidak terpasang (pip install whisperx); memakai estimasi diskalakan ke durasi audio.');
+    notes.push('Aligner tidak tersedia atau gagal (pip install faster-whisper atau whisperx; set MOTION_PY bila perlu); memakai estimasi diskalakan ke durasi audio.');
   }
   if (!result) {
     result = estimateScript(durMs);
